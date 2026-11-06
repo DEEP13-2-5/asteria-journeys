@@ -7,20 +7,20 @@
 
 ## Demo access
 
-The deployed review environment is provisioned with the following staff accounts:
-
-| Role | Username | Password | Main access |
-|---|---|---|---|
-| Owner / admin | `asd` | `admin123` | Package CMS, Blog CMS, enquiries, quotes, team access |
-| Consultant | `consultant` | `consultant123` | Enquiry inbox, assignment, AI review, replies and quotes |
+The application does not publish passwords in source control. For a private review environment, provision temporary credentials through the hosting dashboard or a secure handoff.
 
 Travellers do not need an account. Start at the live home page, open **Journeys**, choose a package, and use **Enquire**.
 
-If a review environment has been reset, an owner can be bootstrapped from an existing user with the one-time command shown below. The application does not create hard-coded users in source code.
+To operate a fresh local or private deployment:
 
-```bash
-node init/setupOwner.js <existing-username>
-```
+1. Register one consultant account at `/signup`.
+2. Promote that existing account once, while no active owner exists:
+
+   ```bash
+   node init/setupOwner.js <existing-username>
+   ```
+3. Sign in as the owner and use **Team Staff** to create invitation links for consultants.
+4. Share temporary credentials privately; rotate or disable them after review.
 
 ## Local setup
 

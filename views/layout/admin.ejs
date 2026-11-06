@@ -27,7 +27,10 @@
       <a href="/" target="_blank" class="sidebar-link">🌐 View Public Site ↗</a>
       <a href="/custom-package" target="_blank" class="sidebar-link">🛠️ Custom Builder ↗</a>
       <a href="/ai-planner" target="_blank" class="sidebar-link">✨ AI Planner ↗</a>
-      <a href="/logout" class="sidebar-link" style="color:#ffb3b3;">🚪 Sign Out</a>
+      <form method="POST" action="/logout" class="sidebar-logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="sidebar-link" style="color:#ffb3b3;">🚪 Sign Out</button>
+      </form>
     </div>
 
     <small>

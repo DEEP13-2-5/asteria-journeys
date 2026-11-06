@@ -60,6 +60,17 @@
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
+.sidebar-logout {
+  margin: 0;
+}
+
+.sidebar-logout .sidebar-link {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
 .sidebar-link:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;

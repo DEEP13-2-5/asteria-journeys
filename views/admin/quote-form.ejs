@@ -10,6 +10,7 @@
 </div>
 
 <form class="editor-grid" method="POST" action="/admin/quotes">
+ <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <% if (enquiry) { %>
     <input type="hidden" name="enquiryId" value="<%= enquiry._id %>">
   <% } %>
@@ -127,4 +128,3 @@
     }
   }
 </script>
-

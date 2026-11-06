@@ -16,6 +16,7 @@
     <p class="muted">Generate a secure one-time invitation link for a new itinerary consultant or operations specialist.</p>
     
     <form method="POST" action="/admin/team/invitations" style="margin-top:1.2rem;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <label>
         Consultant Full Name
         <input name="recipientName" required placeholder="e.g. Vivek Sharma">

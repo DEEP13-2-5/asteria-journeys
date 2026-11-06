@@ -10,8 +10,9 @@ module.exports.signup = async (req, res, next) => {
         const { username, email, password } = req.body;
         if (!username || !email || !password || password.length < 8) throw new Error("Use a name, email and a password of at least 8 characters.");
         
-        // Staff registration: only owner or consultant
-        const role = ["owner", "consultant"].includes(req.body.role) ? req.body.role : "consultant";
+        // Public registration can only create a consultant. Owner access is
+        // granted once through the protected bootstrap command.
+        const role = "consultant";
         const newUser = new User({ email, username, role });
         const registerUser = await User.register(newUser, password);
         

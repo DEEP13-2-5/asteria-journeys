@@ -3,7 +3,7 @@
   <a class="brand auth-brand" href="/">ASTERIA <small>JOURNEYS</small></a>
   <span class="eyebrow">Internal Staff Workspace</span>
   <h1>Staff Registration.</h1>
-  <p>Create credentials for Asteria operations. Travellers can browse and submit enquiries publicly without an account.</p>
+  <p>Create consultant credentials for Asteria operations. Owner access is provisioned separately. Travellers can browse and submit enquiries publicly without an account.</p>
   <form method="POST" action="/signup">
     <label>Work username
       <input name="username" autocomplete="username" required placeholder="e.g. vivek">
@@ -13,12 +13,6 @@
     </label>
     <label>Password <small>At least 8 characters</small>
       <input type="password" name="password" autocomplete="new-password" minlength="8" required placeholder="Create a password">
-    </label>
-    <label>Staff Role
-      <select name="role" style="width:100%; box-sizing:border-box; padding:0.75rem 0.95rem; border:1.5px solid #d1d5db; border-radius:6px; font-size:0.95rem; background:#fff; color:var(--ink); font-family:inherit;">
-        <option value="owner">👑 Owner / Admin (Full CMS & Team Management)</option>
-        <option value="consultant">💼 Consultant (Enquiries & Quote Builder)</option>
-      </select>
     </label>
     <button class="button full">Create Staff Access →</button>
   </form>

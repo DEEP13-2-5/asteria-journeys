@@ -62,11 +62,13 @@
           <small class="muted">Send a personalized custom message or review AI draft</small>
         </div>
         <form method="POST" action="/admin/enquiries/<%= enquiry._id %>/regenerate-ai" style="margin:0;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit" class="ghost" style="font-size:0.8rem; padding:0.4rem 0.75rem;">✨ Regenerate AI Reply Draft</button>
         </form>
       </div>
 
       <form method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label>
           Message Body
           <textarea name="reply" rows="5" placeholder="Write a custom personal reply or use the AI draft above…"><%= enquiry.ai && enquiry.ai.draftReply ? enquiry.ai.draftReply : '' %></textarea>
@@ -113,6 +115,7 @@
       </dl>
 
       <form method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="acceptAi" value="true">
         <button class="ghost full" <%= enquiry.ai.acceptedAt ? 'disabled' : '' %>>
           <%= enquiry.ai.acceptedAt ? '✓ AI Summary Accepted' : 'Accept Recommendation' %>
@@ -122,6 +125,7 @@
 
     <!-- Staff Assignment & Workflow Controls -->
     <form class="admin-card" method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <h2>Workflow Controls</h2>
       
       <label>

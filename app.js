@@ -34,19 +34,22 @@ async function main() {
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || process.env.SECRET || "mysupersecret",
+  secret: process.env.SESSION_SECRET || process.env.SECRET || (process.env.NODE_ENV === "production" ? undefined : "local-development-only-secret"),
   resave: false,
   saveUninitialized: false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
   },
 };
 
@@ -54,7 +57,11 @@ app.use(session(sessionOptions));
 app.use((req, res, next) => {
   if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(32).toString("hex");
   res.locals.csrfToken = req.session.csrfToken;
-  if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method) && req.body?._csrf) {
+  const stateChanging = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method);
+  if (stateChanging && req.session.passport?.user && !req.body?._csrf) {
+    return res.status(403).render("Error.ejs", { message: "Your form expired. Please refresh and try again." });
+  }
+  if (stateChanging && req.body?._csrf) {
     const supplied = String(req.body?._csrf || "");
     if (supplied.length !== req.session.csrfToken.length || !crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(req.session.csrfToken))) return res.status(403).render("Error.ejs", { message: "Your form expired. Please refresh and try again." });
   }
