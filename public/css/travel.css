@@ -2148,3 +2148,309 @@ button { font-family: inherit; }
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+/* ============================================================
+   PACKAGE DETAIL PAGE & STICKY PRICING STYLING
+   ============================================================ */
+.package-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2.5rem;
+  padding: 3rem 5%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+}
+
+.package-hero-image {
+  width: 100%;
+  height: 420px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.package-hero-copy h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2.6rem;
+  line-height: 1.2;
+  margin: 0.5rem 0 1rem 0;
+  color: var(--ink);
+}
+
+.package-hero-copy p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.package-hero-copy .facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: #374151;
+}
+
+.package-hero-copy .facts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Package Content: 2-Column Split (Itinerary on Left, Sticky Price on Right) */
+.package-content {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 3.5rem;
+  padding: 4rem 5%;
+  background: var(--canvas);
+  align-items: start;
+}
+
+.itinerary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.itinerary {
+  display: flex;
+  gap: 1.5rem;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  align-items: flex-start;
+}
+
+.itinerary > b {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: #8c763e;
+  background: #fbf8f0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.itinerary h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--ink);
+}
+
+.itinerary p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.package-inclusions-box {
+  margin: 3rem 0;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.inclusions-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+/* Selected Stays in Package */
+.package-hotels-box {
+  margin: 3rem 0;
+}
+
+.pkg-hotels-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+}
+
+.pkg-hotel-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.pkg-hotel-img {
+  width: 120px;
+  min-height: 100px;
+  background-size: cover;
+  background-position: center;
+}
+
+.pkg-hotel-info {
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pkg-hotel-info strong {
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+/* Sticky Price Panel */
+.price-panel {
+  position: sticky;
+  top: 100px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.price-panel h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  margin: 0 0 0.35rem 0;
+  color: var(--ink);
+}
+
+.seasonal-prices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  background: #fbfbfa;
+  border: 1px solid #e5e7eb;
+}
+
+.price-row.highlight-season {
+  background: #f4f9f6;
+  border-color: #2e604f;
+}
+
+.price-row strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.price-row small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.price-row b {
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.price-notice-box {
+  background: #fbfbfa;
+  padding: 0.9rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Enquiry Form Section */
+.enquiry-section {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 3.5rem;
+  padding: 4rem 5%;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.enquiry-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background: #fbfbfa;
+  padding: 2.2rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.enquiry-form input,
+.enquiry-form select,
+.enquiry-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.95rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+.enquiry-form textarea {
+  grid-column: span 2;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.enquiry-form .consent {
+  font-size: 0.82rem;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .package-hero,
+  .package-content,
+  .enquiry-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .price-panel {
+    position: static;
+  }
+  .inclusions-list,
+  .pkg-hotels-grid,
+  .enquiry-form {
+    grid-template-columns: 1fr;
+  }
+  .enquiry-form textarea,
+  .enquiry-form .consent,
+  .enquiry-form button,
+  .enquiry-form > div {
+    grid-column: span 1 !important;
+  }
+}
