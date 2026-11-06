@@ -1,122 +1,116 @@
-# Asteria Journeys — Deployment & Local Setup Guide
+# Asteria Journeys — Deployment & Review Guide
 
-> **Client:** Company A, Kochi (Kerala & South India Tour Operator)  
-> **Repository:** https://github.com/DEEP13-2-5/asteria-journeys  
-> **Stack:** Node.js (v18+ / v20+), Express.js, MongoDB (Atlas / Community), EJS SSR, OpenRouter LLM
+## Project links
 
----
+- GitHub: https://github.com/DEEP13-2-5/asteria-journeys
+- Live application: https://asteria-journeys.onrender.com
 
-## 1. Demo Login Details for Reviewer
+## Demo access
 
-The system enforces role-based access control (RBAC) across distinct user roles:
+The deployed review environment is provisioned with the following staff accounts:
 
-| Role | Username | Password | Purpose / Permissions |
-| :--- | :--- | :--- | :--- |
-| **Owner / Admin** | `asd` | `admin123` | Full access: Package CMS, Blog CMS, Enquiry Inbox, Quote Generation, Team Invitations, Price Updates |
-| **Consultant** | `consultant` | `consultant123` | Operational access: Enquiry triage, AI extraction review, Quote drafting, Package suggestions |
-| **Public / Traveller** | *No login needed* | *N/A* | Public portal: Package catalog, Custom Package Builder, AI Trip Planner, Blog guides, Instant Enquiries |
+| Role | Username | Password | Main access |
+|---|---|---|---|
+| Owner / admin | `asd` | `admin123` | Package CMS, Blog CMS, enquiries, quotes, team access |
+| Consultant | `consultant` | `consultant123` | Enquiry inbox, assignment, AI review, replies and quotes |
 
-*To access the Admin Portal directly, navigate to `/login` and sign in with the credentials above.*
+Travellers do not need an account. Start at the live home page, open **Journeys**, choose a package, and use **Enquire**.
 
----
+If a review environment has been reset, an owner can be bootstrapped from an existing user with the one-time command shown below. The application does not create hard-coded users in source code.
 
-## 2. Step-by-Step Local Setup
+```bash
+node init/setupOwner.js <existing-username>
+```
+
+## Local setup
 
 ### Prerequisites
-- **Node.js** v18.0.0 or higher
-- **npm** v9.0.0 or higher
-- **MongoDB** instance (local MongoDB server or MongoDB Atlas cluster connection string)
 
-### Steps
+- Node.js 18 or newer
+- npm 9 or newer
+- MongoDB (local or MongoDB Atlas)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/DEEP13-2-5/asteria-journeys.git
-   cd Hotelbnb
-   ```
+### Install and configure
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/DEEP13-2-5/asteria-journeys.git
+cd asteria-journeys
+npm install
+cp .env.example .env
+```
 
-3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory (copy from `.env.example`):
-   ```bash
-   cp .env.example .env
-   ```
-   Populate the `.env` variables with your credentials (see Section 3 for variable names).
+Set the environment variables listed in the next section. A local MongoDB default is:
 
-4. **Seed Database with Sample Data:**
-   Run the idempotent seed script to populate packages (including `PKG-KL-07` and `PKG-SI-12`), curated hotels, sightseeing spots, blogs, and demo accounts:
-   ```bash
-   node init/seedExpandedData.js
-   ```
+```text
+MONGODB_URI=mongodb://127.0.0.1:27017/wanderlust
+```
 
-5. **Run Automated Test Suite:**
-   Verify logic, database integration, pricing, and AI extraction:
-   ```bash
-   npm test
-   ```
-   *(All 5 test suites will pass cleanly).*
+### Seed realistic sample data
 
-6. **Start the Application:**
-   ```bash
-   npm start
-   # or for development with auto-reload:
-   npx nodemon app.js
-   ```
+```bash
+node init/seedExpandedData.js
+```
 
-7. **Access the Web Portal:**
-   - **Public Portal:** http://localhost:8080/
-   - **Holiday Packages:** http://localhost:8080/journeys
-   - **Hotels & Places Explorer:** http://localhost:8080/explore
-   - **Custom Package Builder:** http://localhost:8080/custom-package
-   - **AI Trip Planner:** http://localhost:8080/ai-planner
-   - **Travel Stories & Blogs:** http://localhost:8080/blogs
-   - **Staff Login:** http://localhost:8080/login
-   - **Admin Enquiry Inbox:** http://localhost:8080/admin/enquiries
-   - **Package CMS:** http://localhost:8080/admin/packages
+The seed includes published and draft journeys, seasonal prices, hotels, places, blog content and the sample Kerala enquiry data used by the core flow.
 
----
+### Run tests and start
 
-## 3. Environment Variables
+```bash
+npm test
+npm start
+```
 
-*In compliance with security rules, only variable names are listed below. No real secrets are committed.*
+Open http://localhost:8080. The server automatically tries the next port if the configured port is busy.
 
-| Variable Name | Required | Description |
-| :--- | :--- | :--- |
-| `ATLASTDB_URL` or `MONGODB_URI` | **Yes** | MongoDB connection URI (Atlas cloud or local `mongodb://127.0.0.1:27017/hotelbnb`) |
-| `SESSION_SECRET` | **Yes** | Cryptographic secret for signing HTTP session cookies |
-| `OPENROUTER_API_KEY` | Optional | API key for OpenRouter LLM (enquiry extraction & AI package generation) |
-| `OPENROUTER_MODEL` | Optional | LLM model identifier (default: `dots-studio/dots-3-note-preview:free` or `openai/gpt-4o-mini`) |
-| `CLOUD_NAME` | Optional | Cloudinary cloud name for uploaded hotel/package media |
+Useful routes:
+
+- `/` — public landing page
+- `/journeys` — searchable package catalogue
+- `/journeys/<slug>` — server-rendered package detail and enquiry form
+- `/custom-package` — custom package and branded quote flow
+- `/blogs` — first-party travel content
+- `/login` — staff sign-in
+- `/admin/enquiries` — unified enquiry inbox
+- `/admin/packages` — owner package CMS
+- `/admin/blogs` — owner blog CMS
+- `/admin/quotes` — quote management
+- `/sitemap.xml` — SEO sitemap
+
+## Environment variables
+
+Never commit values for these variables. Only the names are required in a deployment environment:
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `MONGODB_URI` or `ATLASTDB_URL` | Yes | MongoDB connection string |
+| `SESSION_SECRET` | Yes in production | Session and cookie signing secret |
+| `OPENROUTER_API_KEY` | Optional | LLM enrichment and custom itinerary generation |
+| `OPENROUTER_MODEL` | Optional | OpenRouter model identifier |
+| `MAPBOX_TOKEN` | Optional | Map display token; public map fallback remains available |
+| `CLOUD_NAME` | Optional | Cloudinary media storage |
 | `CLOUD_API_KEY` | Optional | Cloudinary API key |
 | `CLOUD_API_SECRET` | Optional | Cloudinary API secret |
-| `MAPBOX_TOKEN` | Optional | Mapbox public access token for interactive itinerary maps |
-| `PORT` | Optional | Web server port (defaults to `8080` with auto-fallback to `8081`) |
+| `PORT` | Optional | HTTP port; defaults to `8080` |
+| `NODE_ENV` | Recommended | Set to `production` on Render |
 
-> **Graceful Degradation Note:** If `OPENROUTER_API_KEY` is not provided, the platform automatically engages its built-in rule-based NLP extraction and deterministic pricing engine. The application remains fully functional without external third-party API dependencies.
+Without an OpenRouter key, the enquiry flow remains usable through the deterministic extraction fallback in `services/ai.js`. AI output is stored as a draft for staff review; it does not send messages or publish content automatically.
 
----
+## Render deployment
 
-## 4. Production Deployment Guide
+1. Create a Render **Web Service** from the GitHub repository.
+2. Use Node runtime.
+3. Set build command to `npm install`.
+4. Set start command to `node app.js`.
+5. Add the environment variables above in Render. Use a managed MongoDB Atlas database.
+6. Deploy, then run `node init/seedExpandedData.js` once from a secure one-off shell or local machine connected to the same database.
+7. Verify `/`, `/journeys`, `/login`, and `/sitemap.xml`.
 
-The application is structured for straightforward deployment on cloud platforms such as **Render**, **Railway**, **Fly.io**, or an **AWS EC2 / DigitalOcean Droplet**:
+The current live deployment is available at https://asteria-journeys.onrender.com.
 
-### Deploying to Render / Railway:
-1. Connect your GitHub repository (`https://github.com/DEEP13-2-5/asteria-journeys`) to Render / Railway.
-2. Select **Web Service** with runtime `Node`.
-3. Set the **Build Command**: `npm install`
-4. Set the **Start Command**: `node app.js`
-5. Under **Environment Variables**, supply:
-   - `ATLASTDB_URL`
-   - `SESSION_SECRET`
-   - `OPENROUTER_API_KEY`
-   - `OPENROUTER_MODEL`
-   - `NODE_ENV=production`
-6. Once deployed, run the seed script once via the platform shell or one-off job:
-   ```bash
-   node init/seedExpandedData.js
-   ```
-7. Verify health: `GET /journeys` should return HTTP 200 with server-rendered package pages.
+## Security and data notes
+
+- `.env` and ZIP files are ignored by Git.
+- Passwords use Passport Local Mongoose hashing; staff routes use role checks.
+- Enquiry writes are rate-limited and include CSRF-token validation for state-changing requests.
+- WhatsApp follow-up is opt-in via `whatsappConsent`.
+- The repository contains synthetic sample data only. Do not use real traveller data in a demo database.

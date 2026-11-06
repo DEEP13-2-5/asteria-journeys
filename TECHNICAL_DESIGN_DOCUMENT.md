@@ -194,7 +194,7 @@ Consultant clicks "+ Generate Branded Quote":
 - Click on any package to edit seasonal price tiers (`Peak`, `Monsoon`, `All-Year`).
 - Every change automatically appends a version snapshot to `versions[]` tracking who made the edit, the timestamp, and the previous snapshot.
 - One-click duplicate (`/admin/packages/:id/duplicate`) enables spinning off 5-day variations into 7-day variations in seconds.
-- Draft packages can be reviewed via `/admin/packages/:id/preview` before publishing.
+- Draft packages can be previewed through the server-rendered package page with the owner-only `?preview=1` query flag before publishing.
 
 ---
 
@@ -209,7 +209,7 @@ The brief establishes unambiguous safety requirements: *"Extracted fields sit be
 Our system enforces this via three non-negotiable boundaries:
 
 1. **Human-in-the-Loop Validation:**
-   The AI never contacts travellers autonomously. It generates an editable *draft* stored in the database. The consultant inspects the side-by-side comparison, adjusts fields, and explicitly sends the reply.
+   The AI never contacts travellers autonomously. It generates an editable *draft* stored in the database. The consultant reviews the original message alongside the extracted fields, adjusts them when needed, and explicitly sends the reply.
 2. **Deterministic Pricing (Zero Price Hallucination):**
    The LLM prompt strictly forbids fabricating prices. All final quotations in `services/ai.js`, `controllers/travel.js`, and `models/quote.js` are computed mathematically:
    $$\text{Final Price} = (\text{Base Price} - \text{Fare Concession} - \text{Promo Discount}) \times 1.05 \text{ (GST)}$$
@@ -252,6 +252,8 @@ Our system enforces this via three non-negotiable boundaries:
 1. **WhatsApp Business Cloud API:** Automated dispatch of accepted quotes to traveller WhatsApp upon consultant approval.
 2. **Multi-Language Localization:** Hindi and German public package pages using EJS i18n dictionaries.
 3. **Automated Lead Routing:** Dynamic round-robin lead allocation among active consultants based on queue depth.
+
+4. **Activity log and finer-grained editor role:** The current core build uses owner, consultant, and customer roles and records package version snapshots. A separate immutable activity-log collection and editor-only role would be added next for the full enterprise scope.
 
 ---
 
