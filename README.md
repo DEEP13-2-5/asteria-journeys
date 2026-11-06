@@ -1,91 +1,43 @@
-# Hotelbnb
+# Asteria Journeys
 
-Hotelbnb is a full-stack web application inspired by Airbnb, designed to facilitate the listing, discovery, and booking of accommodations. The platform allows users to create, manage, and explore various accommodations worldwide.
+Asteria Journeys is a server-rendered travel operations platform for a Kerala and South India tour operator. It gives travellers a polished package discovery and enquiry experience while giving staff a focused workspace for package content, seasonal pricing, AI-assisted enquiry handling, blogs and branded quotes.
 
-## Live Demo
-Here is the demo of the project
-https://hotelbnb-nj6a.onrender.com/listings
+## Links
 
+- Live application: https://asteria-journeys.onrender.com
+- GitHub repository: https://github.com/DEEP13-2-5/asteria-journeys
 
-## Features
-- User authentication (sign up, login, logout)
-- CRUD operations for listings (create, update, delete, and view accommodations)
-- Image uploads for listings
-- Search and filter functionality
-- Review and rating system
-- Interactive maps using Leaflet
-- Flash messages for user notifications
-- Secure authentication with sessions
+## Core flow
 
-## Tech Stack
-- **Frontend:** HTML, CSS, JavaScript, EJS (Embedded JavaScript)
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB (MongoDB Atlas)
-- **Authentication:** Passport.js
-- **File Uploads:** Multer with Cloudinary storage
-- **Geocoding & Maps:** OpenStreetMap with `node-geocoder` and Leaflet.js
+1. Browse searchable journeys and open a server-rendered package detail page.
+2. Submit an enquiry with traveller details and optional WhatsApp consent.
+3. Sign in to the staff workspace and review the enquiry in `/admin/enquiries`.
+4. Inspect the original message beside AI-extracted fields, destination-based suggestions and an editable reply draft.
+5. Manage journeys and seasonal prices through `/admin/packages`, or create a branded quote.
 
-## Installation
+## Included features
 
-### Prerequisites
-Ensure you have the following installed:
-- Node.js
-- MongoDB (or MongoDB Atlas account)
+- Responsive public travel site with package pages, itineraries, inclusions, hotels, pricing and maps
+- Owner package CMS with create, edit, duplicate, seasonal prices, preview mode and version snapshots
+- First-party blog CMS with categories, SEO fields and related packages
+- Website enquiry forms and staff inbox with status, assignment, notes and replies
+- AI extraction with deterministic fallback when an external model is unavailable
+- Branded quote generation with per-person, twin-sharing and 5% GST terms
+- Passport-based authentication and owner/consultant/customer access control
+- MongoDB persistence, seeded sample data and automated tests
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/DEEP13-2-5/Hotelbnb.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd Hotelbnb
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Set up environment variables:
-   - Create a `.env` file in the root directory.
-   - Add the following environment variables:
-     ```env
-     DATABASE_URL=<your_mongodb_atlas_url>
-     CLOUDINARY_CLOUD_NAME=<your_cloudinary_name>
-     CLOUDINARY_API_KEY=<your_cloudinary_api_key>
-     CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
-     MAPBOX_TOKEN=<your_mapbox_token>
-     ```
-5. Start the application:
-   ```bash
-   npm start
-   ```
-6. Open your browser and navigate to `http://localhost:3000`.
+External WhatsApp, email, chat and phone ingestion is not implemented in this prototype; the inbox consolidates website-submitted enquiries. The consent field supports the intended workflow but is not a complete DPDP Act 2023 compliance guarantee.
 
-## Usage
-- Sign up or log in to create a new listing.
-- Add images, location, and descriptions for accommodations.
-- Search for listings by category or location.
-- Leave reviews and ratings for accommodations.
+## Local setup
 
-## Folder Structure
-```
-Hotelbnb/
-├── models/         # Mongoose models
-├── routes/         # Express routes
-├── views/          # EJS templates
-├── public/         # Static assets (CSS, JS, images)
-├── middleware/     # Custom middleware functions
-├── cloudConfig.js  # Multer storage configuration
-├── app.js          # Main Express application
-└── package.json    # Project metadata and dependencies
+See [`deployment.md`](./deployment.md) for prerequisites, environment variable names, seed commands, demo credentials and Render deployment instructions.
+
+```bash
+npm install
+cp .env.example .env
+node init/seedExpandedData.js
+npm test
+npm start
 ```
 
-## Deployment
-To deploy the project:
-1. Set up a MongoDB Atlas database.
-2. Configure environment variables.
-3. Deploy to a hosting service like **Render**
-   
-## Author
-- **[DEEP13-2-5]**
-- GitHub: [DEEP13-2-5](https://github.com/DEEP13-2-5)
+The local server runs on port `8080` by default.

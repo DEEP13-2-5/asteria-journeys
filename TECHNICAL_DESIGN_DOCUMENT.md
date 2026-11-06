@@ -15,14 +15,14 @@ Company A is an established South India tour operator based in Kochi, Kerala, sp
 
 1. **Slow & Expensive Content Agility:** Every package modification or seasonal pricing revision was outsourced to an external freelancer at ₹3,000 and 3 days per turnaround. At 40 content changes a month, this created an annual drain of **₹14.4 Lakh** while crippling dynamic pricing during peak season.
 2. **Disconnected Content Conversion:** Travel blogs were hosted on an external free blogging site with no interactive links or booking funnels back to the company's packages.
-3. **Severe Lead Slippage & Lost Margin:** ~2,400 monthly enquiries arrived across fractured channels (web forms, WhatsApp, email, chat, phone) and were tracked manually in Excel. Crucially, 25% (600 enquiries/month) received replies after 12 hours, collapsing conversion from 15% to 7%. This delay caused **48 lost bookings every month**, hemorrhaging **₹52.42 Lakh in lost gross margin annually**. Combined with freelance CMS fees, the company lost **₹66.82 Lakh every year**.
+3. **Severe Lead Slippage & Lost Margin:** The brief estimates ~2,400 monthly enquiries across fractured channels (web forms, WhatsApp, email, chat, phone), tracked manually in Excel. It further estimates that 25% (600 enquiries/month) received replies after 12 hours, with conversion falling from 15% to 7%. On those assumptions, the estimated impact is **48 lost bookings per month** and **₹52.42 Lakh in lost gross margin annually**. Combined with estimated freelance CMS fees, the brief's estimated annual opportunity is **₹66.82 Lakh**; this is not a measured result from the prototype.
 
 ### The Solution: Asteria Journeys
 Asteria Journeys is a purpose-built, full-stack travel operations platform:
 - **In-House Versioned Package CMS:** Empowers non-technical staff to create, edit, duplicate, and reprice packages in **under 5 minutes** without developer dependency.
 - **Integrated Blog CMS:** Contextually embeds matching packages directly inside editorial travel stories to maximize organic conversion.
-- **Centralized Operational Inbox:** Ingests enquiries across all web touchpoints into a unified triage dashboard with instant acknowledgements.
-- **AI-Assisted Extraction & Reply Drafting:** Uses an LLM to parse dates, guest counts, destinations, budgets, and must-haves, matching the top 3 best-fit packages from the catalog.
+- **Centralized Operational Inbox:** Consolidates enquiries submitted through the implemented website forms into a unified triage dashboard with instant acknowledgements. WhatsApp, email, chat and phone integrations are future work.
+- **AI-Assisted Extraction & Reply Drafting:** Uses an LLM, with a deterministic fallback, to parse dates, guest counts, destinations, budgets and must-haves. Suggestions are destination-based matches from the package catalogue; they are not a sophisticated ranking model.
 - **Branded Instant Quote Builder:** Generates compliant corporate quotes itemizing 5% GST and twin-sharing terms, exportable to printable PDFs.
 
 ---
@@ -112,9 +112,9 @@ Asteria Journeys is a purpose-built, full-stack travel operations platform:
    - `days`, `nights`: Duration numbers.
    - `destinations`: String array (e.g., `['Munnar', 'Thekkady', 'Alleppey']`).
    - `hotelCategory`: `3 star`, `4 star`, `5 star`, `Heritage / Boutique`.
-   - `seasonalPrices`: Array of `{ label: String, price: Number, validity: String }`.
+   - `seasonalPrices`: Array of `{ label: String, price: Number, startDate: Date, endDate: Date, gstNote: String }`.
    - `itinerary`: Array of `{ day: Number, title: String, description: String }`.
-   - `inclusions`, `exclusions`: Policy lists.
+   - `inclusions`: Policy list displayed in package details and quotes.
    - `status`: Enum `['draft', 'published', 'archived']`.
    - `versions`: Historical snapshot subdocuments (`savedAt`, `savedBy`, `snapshot`, `note`).
    - `createdBy`, `updatedBy`: User tracking.
@@ -123,13 +123,13 @@ Asteria Journeys is a purpose-built, full-stack travel operations platform:
    - Location-indexed stays and attractions across Munnar, Alleppey, Thekkady, Kochi, Wayanad, Kovalam, Madurai, and Kanyakumari.
 
 3. **`Enquiry` (`models/enquiry.js`):**
-   - `name`, `email`, `phone`, `whatsappConsent` (DPDP Act 2023 compliance).
+   - `name`, `email`, `phone`, `whatsappConsent` (an opt-in field intended to support DPDP-aware follow-ups; this prototype is not a complete DPDP compliance implementation).
    - `message`: Original raw enquiry text.
    - `fareType`: Regular, Student, Armed Forces, Senior Citizen, GST Concession, Doctor & Nurse.
    - `promoCode`: Voucher code (`MMTKERALA`, `HOUSEBOAT3K`, `ICICITRAVEL`).
    - `ai`: Subdocument capturing `{ dates, travellers, destination, budget, mustHave }`, `personalizedPlan`, `draftReply`, and `suggestions[]`.
    - `messages`: Array of `{ direction: 'inbound'|'outbound'|'system', text: String, author: String, createdAt: Date }`.
-   - `status`: `['new', 'in_progress', 'quoted', 'booked', 'closed']`.
+   - `status`: `['new', 'in_progress', 'quoted', 'closed']`.
    - `assignedTo`: Consultant user identifier.
 
 4. **`Quote` (`models/quote.js`):**
@@ -158,7 +158,7 @@ Traveller visits Public Site (No login required)
   ├── OR Uses Interactive 6-Step Custom Package Builder (/custom-package)
   ├── OR Generates an AI-Crafted Bespoke Holiday Plan (/ai-planner)
   │
-Submits Package Enquiry Form (with mandatory DPDP WhatsApp Consent)
+Submits Package Enquiry Form (with optional WhatsApp consent)
   │
 Instant acknowledgement confirmation displayed on-screen
   │
@@ -172,7 +172,7 @@ Enquiry lands in Unified Admin Inbox (/admin/enquiries)
 AI Service (services/ai.js):
   ├── Invokes OpenRouter LLM (with 6s timeout)
   ├── Extracts: Dates, Travellers, Destination, Budget, Must-Haves
-  ├── Discovers 3 best-fit packages from database catalog
+  ├── Finds destination-based package suggestions from the database catalog
   ├── Drafts warm, personalized reply
   └── [FAILURE/TIMEOUT BRANCH]: Deterministic Regex Fallback engages
   │
@@ -240,7 +240,7 @@ Our system enforces this via three non-negotiable boundaries:
 - **[ASSUMPTION-01] Currency & Tax:** All prices are in Indian Rupees (INR, ₹). Holiday packages are taxed at 5% GST under Indian tourism service guidelines.
 - **[ASSUMPTION-02] Enquiry Conversion Rates:** As stated in the brief, sub-1-hour replies sustain a 15% booking rate, whereas 12+ hour delays drop conversion to 7%.
 - **[ASSUMPTION-03] Double Occupancy:** Package rates assume twin sharing basis; single supplements are handled during quote customization.
-- **[ASSUMPTION-04] DPDP Act 2023 Compliance:** WhatsApp follow-ups require affirmative consent; a dedicated opt-in checkbox is required on all forms.
+- **[ASSUMPTION-04] Consent handling:** The prototype records an optional WhatsApp consent checkbox. External channel integrations, retention controls, data-subject workflows and a complete DPDP Act 2023 compliance program are outside this submission.
 - **[ASSUMPTION-05] Guest Access:** Travellers browse and submit enquiries without account creation; authentication is strictly for internal staff.
 
 ### 7.2 What Was Cut (Out of Scope)
