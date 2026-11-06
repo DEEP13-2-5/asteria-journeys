@@ -1021,7 +1021,7 @@ button { font-family: inherit; }
   gap: 2.5rem;
   align-items: flex-start;
 }
-.builder-card {
+.custom-builder-container .builder-card {
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 8px;
