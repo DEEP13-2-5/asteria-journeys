@@ -2,7 +2,7 @@
 ## Asteria Journeys — Custom CMS & AI-Powered Operations Platform for Tour Operators
 
 > **GitHub Repository:** https://github.com/DEEP13-2-5/asteria-journeys  
-> **Live Application URL:** https://hotelbnb-demo.onrender.com *(or local port 8080)*  
+> **Live Application URL:** https://asteria-journeys.onrender.com *(or local port 8080)*  
 > **Author:** Deep Bodani (Software Engineering Candidate)  
 > **Client:** Company A, Kochi, Kerala (Tour operator: ₹28–34 Cr revenue, ~4,300 annual bookings across 60 packages)  
 > **Date:** November 2026
