@@ -1,0 +1,27 @@
+<a class="journey-card" href="/journeys/<%= pkg.slug %>">
+  <div class="journey-image" style="background-image:url('<%= (pkg.image && pkg.image.url) || 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=800&q=80' %>')"></div>
+  <div class="card-copy">
+    <div class="card-meta-bar">
+      <span class="card-days-pill">📅 <%= pkg.days %> Days / <%= pkg.nights || (pkg.days - 1) %> Nights</span>
+      <span class="card-stay-pill">🏨 <%= pkg.hotelCategory %></span>
+    </div>
+    <div class="card-loc-line">
+      <% if (pkg.destinations && pkg.destinations.length) { %>
+        📍 <%= pkg.destinations.slice(0, 3).join(" · ") %>
+      <% } else { %>
+        📍 Kerala & South India
+      <% } %>
+    </div>
+    <h3><%= pkg.title %></h3>
+    <p><%= pkg.subtitle || pkg.description?.slice(0, 85) + '...' %></p>
+    
+    <div class="card-pricing-footer">
+      <div class="card-price">
+        <span class="from-text">From</span>
+        <strong>₹<%= pkg.seasonalPrices[0] ? pkg.seasonalPrices[0].price.toLocaleString("en-IN") : "24,900" %></strong>
+        <small>/ person</small>
+      </div>
+      <span class="card-twin-note">Twin sharing · GST extra</span>
+    </div>
+  </div>
+</a>

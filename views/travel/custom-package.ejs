@@ -1,0 +1,473 @@
+<%- layout("/layout/travel") %>
+
+<div class="custom-builder-container">
+  <div class="builder-head">
+    <span class="eyebrow">Bespoke Itinerary & Quote Builder</span>
+    <h1>Design Your Custom South India Journey</h1>
+    <p>Choose your destinations, select stays according to location, customize private cab transfers and experiences. Real-time pricing with twin-sharing and 5% GST clarity.</p>
+  </div>
+
+  <form id="custom-package-form" class="builder-grid-layout" method="POST" action="/custom-package">
+    <!-- Left Configuration Panel -->
+    <div class="builder-main">
+
+      <!-- Step 1: Choose Destinations -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 1</div>
+        <h3>Select Your Destinations & Route</h3>
+        <p class="small">Check the places you wish to visit. Stays and sightseeing for these towns will automatically appear below.</p>
+        
+        <div class="dest-checkbox-grid">
+          <% locations.forEach(loc => { %>
+            <label class="dest-checkbox-card">
+              <input type="checkbox" name="destinations" value="<%= loc %>" class="dest-check" <%= ['Munnar', 'Thekkady', 'Alleppey'].includes(loc) ? 'checked' : '' %>>
+              <span class="dest-box">
+                <strong><%= loc %></strong>
+                <small>Kerala & South</small>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </section>
+
+      <!-- Step 2: Trip Duration & Dates -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 2</div>
+        <h3>Duration, Dates & Group Size</h3>
+        
+        <div class="form-three-col">
+          <label class="form-label">
+            Duration (Days)
+            <select name="days" id="input-days" class="form-input">
+              <option value="3">3 Days / 2 Nights</option>
+              <option value="4">4 Days / 3 Nights</option>
+              <option value="5">5 Days / 4 Nights</option>
+              <option value="6" selected>6 Days / 5 Nights (Recommended)</option>
+              <option value="7">7 Days / 6 Nights</option>
+              <option value="8">8 Days / 7 Nights</option>
+              <option value="10">10 Days / 9 Nights</option>
+            </select>
+          </label>
+
+          <label class="form-label">
+            Approximate Dates / Month
+            <input type="text" name="travelDates" class="form-input" placeholder="e.g. Dec 18-24 (Peak Season)" value="December (Peak Season)">
+          </label>
+
+          <label class="form-label">
+            Travellers
+            <select name="travellers" id="input-travellers" class="form-input">
+              <option value="2 Adults" selected>2 Adults (Twin Sharing)</option>
+              <option value="2 Adults, 1 Kid">2 Adults + 1 Kid (Family)</option>
+              <option value="3 Adults">3 Adults (Triple Sharing)</option>
+              <option value="4 Adults">4 Adults (2 Twin Rooms)</option>
+              <option value="6 Adults">6 Adults (Small Group)</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <!-- Step 3: Choose Stays & Hotels According to Location ("some hotels places come acc to location") -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 3</div>
+        <h3>Select Accommodation Tier & Specific Hotels</h3>
+        <p class="small">Verified 3★, 4★, 5★ resorts and private backwater houseboats.</p>
+
+        <!-- Category Radio Selector -->
+        <div class="hotel-tier-selector">
+          <label class="tier-radio-card">
+            <input type="radio" name="hotelCategory" value="3 star" class="tier-radio">
+            <span class="tier-box">
+              <strong>3★ Comfort Heritage</strong>
+              <small>Curated homestays & comfortable city hotels</small>
+            </span>
+          </label>
+
+          <label class="tier-radio-card active">
+            <input type="radio" name="hotelCategory" value="4 star" class="tier-radio" checked>
+            <span class="tier-box">
+              <strong>4★ Deluxe Resorts & Houseboat</strong>
+              <small>Tea valley views, lakefront resorts & private AC boat</small>
+            </span>
+          </label>
+
+          <label class="tier-radio-card">
+            <input type="radio" name="hotelCategory" value="5 star" class="tier-radio">
+            <span class="tier-box">
+              <strong>5★ Luxury Wellness & Palaces</strong>
+              <small>CGH Earth, Leela Kovalam, Brunton Boatyard</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="location-hotels-checklist">
+          <h4>Handpicked Properties Matching Your Route:</h4>
+          <div class="hotel-options-list" id="available-hotels-list">
+            <% hotels.forEach(h => { %>
+              <label class="hotel-choice-item" data-location="<%= h.location %>" data-price="<%= h.pricePerNight %>">
+                <input type="checkbox" name="selectedHotels" value="<%= h.name %> (<%= h.location %>)" checked>
+                <div class="hotel-choice-info">
+                  <strong><%= h.name %></strong>
+                  <span class="small">📍 <%= h.location %> · <%= h.starCategory %> · ★ <%= h.rating %></span>
+                </div>
+                <div class="hotel-choice-rate">₹<%= h.pricePerNight.toLocaleString("en-IN") %>/night</div>
+              </label>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Experiences & Inclusions -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 4</div>
+        <h3>Included Experiences & Activities</h3>
+        
+        <div class="inclusions-grid">
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Private AC Chauffeur Sedan / Innova for full tour" checked disabled>
+            <span class="inc-box">
+              <strong>Private AC Vehicle & Chauffeur</strong>
+              <small>Fuel, toll, parking and driver batta included</small>
+            </span>
+            <span class="inc-status">INCLUDED</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Daily gourmet breakfast at all hotels" checked disabled>
+            <span class="inc-box">
+              <strong>Daily Breakfast at All Stays</strong>
+              <small>Fresh regional & continental spread</small>
+            </span>
+            <span class="inc-status">INCLUDED</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Private Alleppey Houseboat Day/Overnight Cruise with all meals" class="extra-inc" data-cost="4500" checked>
+            <span class="inc-box">
+              <strong>Alleppey Luxury Houseboat Night Cruise</strong>
+              <small>Private chef, all meals, Karimeen fish dinner</small>
+            </span>
+            <span class="inc-price">+₹4,500/p</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Periyar Wildlife Sanctuary Lake Boat Safari passes" class="extra-inc" data-cost="750" checked>
+            <span class="inc-box">
+              <strong>Periyar Lake Boat Safari Passes</strong>
+              <small>Wild elephant herd spotting on calm waters</small>
+            </span>
+            <span class="inc-price">+₹750/p</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Authentic Munnar Tea Museum Tour & Guided Tea Tasting" class="extra-inc" data-cost="400" checked>
+            <span class="inc-box">
+              <strong>Munnar Tea Factory & Guided Tasting</strong>
+              <small>KDHP heritage factory & tea sommelier session</small>
+            </span>
+            <span class="inc-price">+₹400/p</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="Traditional Kathakali & Kalaripayattu Martial Arts Evening" class="extra-inc" data-cost="500">
+            <span class="inc-box">
+              <strong>Kathakali & Kalaripayattu Live Show</strong>
+              <small>Front-row seats for ancient theatre & martial art</small>
+            </span>
+            <span class="inc-price">+₹500/p</span>
+          </label>
+
+          <label class="inc-check-label">
+            <input type="checkbox" name="inclusions" value="60-minute Ayurvedic Full Body Rejuvenation Massage" class="extra-inc" data-cost="1800">
+            <span class="inc-box">
+              <strong>60-Min Ayurvedic Rejuvenation Spa</strong>
+              <small>Authentic herbal oils at certified center</small>
+            </span>
+            <span class="inc-price">+₹1,800/p</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Step 5: Special Fare & Discount Promo Codes (MakeMyTrip Style) -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 5</div>
+        <h3>Select Special Fare & Apply Promo Code</h3>
+
+        <!-- Special Fares Selection -->
+        <div class="fare-picker-row">
+          <label class="fare-option active">
+            <input type="radio" name="fareType" value="Regular" class="builder-fare-radio" checked>
+            <span>Regular Fare</span>
+          </label>
+          <label class="fare-option">
+            <input type="radio" name="fareType" value="Student" class="builder-fare-radio">
+            <span>Student (₹500 off)</span>
+          </label>
+          <label class="fare-option">
+            <input type="radio" name="fareType" value="Armed Forces" class="builder-fare-radio">
+            <span>Armed Forces (₹600 off)</span>
+          </label>
+          <label class="fare-option">
+            <input type="radio" name="fareType" value="Senior Citizen" class="builder-fare-radio">
+            <span>Senior Citizen (₹600 off)</span>
+          </label>
+          <label class="fare-option">
+            <input type="radio" name="fareType" value="Have a GST number?" class="builder-fare-radio">
+            <span>GST Corporate (10% extra)</span>
+          </label>
+        </div>
+
+        <!-- Promo Code Input -->
+        <div class="promo-code-input-wrap">
+          <label class="form-label" style="margin:0; flex:1;">
+            Have a Promo Code from Offers?
+            <input type="text" name="promoCode" id="promo-code-input" class="form-input" placeholder="e.g. MMTKERALA or HOUSEBOAT3K" value="<%= initialCode %>">
+          </label>
+          <button type="button" id="apply-promo-btn" class="button">Apply Code</button>
+        </div>
+        <div id="promo-feedback" class="promo-feedback-text">
+          <% if (initialOffer) { %>
+            ✓ Active Offer Applied: <%= initialOffer.title %> (<%= initialOffer.code %>)
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Step 6: Traveller Details & Delivery -->
+      <section class="builder-card">
+        <div class="step-badge">STEP 6</div>
+        <h3>Traveller Details for Official Branded Quote</h3>
+        
+        <div class="form-two-col">
+          <label class="form-label">
+            Full Name *
+            <input type="text" name="name" class="form-input" required placeholder="e.g. Vikram Sharma">
+          </label>
+          <label class="form-label">
+            Email Address *
+            <input type="email" name="email" class="form-input" required placeholder="e.g. vikram.sharma@example.com">
+          </label>
+        </div>
+
+        <div class="form-two-col">
+          <label class="form-label">
+            Phone / WhatsApp Number *
+            <input type="tel" name="phone" class="form-input" required placeholder="WhatsApp / Mobile Number">
+          </label>
+          <label class="form-label">
+            Special Requests / Must Haves
+            <input type="text" name="message" class="form-input" placeholder="e.g. Houseboat a must, lake view rooms, ground floor" value="Houseboat a must, private chauffeur">
+          </label>
+        </div>
+
+        <label class="consent-label">
+          <input type="checkbox" name="whatsappConsent" value="true" checked>
+          <span>I consent to receiving official itinerary updates, quotes, and WhatsApp follow-ups in compliance with the DPDP Act 2023.</span>
+        </label>
+      </section>
+    </div>
+
+    <!-- Right Summary & Live Calculation Sticky Box -->
+    <aside class="builder-sidebar">
+      <div class="sticky-price-card">
+        <h3>Estimated Investment</h3>
+        <span class="small">Per Person · Twin Sharing · Kochi Desk</span>
+
+        <hr class="summary-sep">
+
+        <div class="calc-row">
+          <span>Base Package (<span id="calc-days-label">6</span> Days)</span>
+          <strong id="calc-base-price">₹28,800</strong>
+        </div>
+
+        <div class="calc-row">
+          <span>Hotel Category Adjustment</span>
+          <strong id="calc-hotel-price">₹4,200</strong>
+        </div>
+
+        <div class="calc-row">
+          <span>Selected Experiences</span>
+          <strong id="calc-inc-price">₹5,650</strong>
+        </div>
+
+        <div class="calc-row discount-row" id="calc-fare-discount-row" style="display:none;">
+          <span>Special Fare Discount</span>
+          <span id="calc-fare-discount">-₹0</span>
+        </div>
+
+        <div class="calc-row discount-row" id="calc-promo-discount-row">
+          <span>Promo Code Discount</span>
+          <span id="calc-promo-discount">-₹0</span>
+        </div>
+
+        <hr class="summary-sep">
+
+        <div class="calc-row">
+          <span>Subtotal per person</span>
+          <strong id="calc-subtotal">₹38,650</strong>
+        </div>
+
+        <div class="calc-row">
+          <span>GST (5% Itemized)</span>
+          <strong id="calc-gst">₹1,932</strong>
+        </div>
+
+        <div class="calc-row grand-total-row">
+          <div>
+            <strong>Total Price</strong>
+            <small>Twin sharing basis</small>
+          </div>
+          <div class="grand-price" id="calc-grand-total">₹40,582</div>
+        </div>
+
+        <input type="hidden" name="basePrice" id="hidden-base-price" value="38650">
+        <input type="hidden" name="totalPrice" id="hidden-total-price" value="40582">
+
+        <div class="builder-actions">
+          <button type="submit" class="button full">Generate Branded PDF Quote →</button>
+          <p class="small text-center" style="margin-top: 0.8rem;">Every quote comes with an official PDF download, shareable link, and direct consultant follow-up.</p>
+        </div>
+      </div>
+    </aside>
+  </form>
+</div>
+
+<!-- Dynamic Calculator Logic -->
+<script>
+  const daysSelect = document.getElementById('input-days');
+  const tierRadios = document.querySelectorAll('.tier-radio');
+  const extraIncs = document.querySelectorAll('.extra-inc');
+  const fareRadios = document.querySelectorAll('.builder-fare-radio');
+  const promoInput = document.getElementById('promo-code-input');
+  const applyPromoBtn = document.getElementById('apply-promo-btn');
+  const promoFeedback = document.getElementById('promo-feedback');
+
+  // Calculation display elements
+  const daysLabel = document.getElementById('calc-days-label');
+  const basePriceEl = document.getElementById('calc-base-price');
+  const hotelPriceEl = document.getElementById('calc-hotel-price');
+  const incPriceEl = document.getElementById('calc-inc-price');
+  const fareRow = document.getElementById('calc-fare-discount-row');
+  const fareDiscountEl = document.getElementById('calc-fare-discount');
+  const promoRow = document.getElementById('calc-promo-discount-row');
+  const promoDiscountEl = document.getElementById('calc-promo-discount');
+  const subtotalEl = document.getElementById('calc-subtotal');
+  const gstEl = document.getElementById('calc-gst');
+  const grandTotalEl = document.getElementById('calc-grand-total');
+  const hiddenBase = document.getElementById('hidden-base-price');
+  const hiddenTotal = document.getElementById('hidden-total-price');
+
+  let activePromoDiscount = 0;
+
+  function recalculate() {
+    const days = Number(daysSelect.value) || 6;
+    if (daysLabel) daysLabel.innerText = days;
+
+    const basePerDay = 4800;
+    const base = days * basePerDay;
+
+    let selectedTier = '4 star';
+    tierRadios.forEach(r => { if (r.checked) selectedTier = r.value; });
+
+    let hotelAdj = 0;
+    if (selectedTier === '3 star') hotelAdj = -1200 * days;
+    else if (selectedTier === '4 star') hotelAdj = 700 * days;
+    else if (selectedTier === '5 star') hotelAdj = 2500 * days;
+
+    let incTotal = 0;
+    extraIncs.forEach(inc => {
+      if (inc.checked) incTotal += Number(inc.dataset.cost || 0);
+    });
+
+    let fareDiscount = 0;
+    fareRadios.forEach(fr => {
+      if (fr.checked) {
+        if (fr.value === 'Armed Forces' || fr.value === 'Senior Citizen') fareDiscount = 600;
+        else if (fr.value === 'Student') fareDiscount = 500;
+        else if (fr.value === 'Have a GST number?') fareDiscount = Math.round(base * 0.08);
+      }
+    });
+
+    if (fareRow) {
+      if (fareDiscount > 0) {
+        fareRow.style.display = 'flex';
+        fareDiscountEl.innerText = '-₹' + fareDiscount.toLocaleString('en-IN');
+      } else {
+        fareRow.style.display = 'none';
+      }
+    }
+
+    if (promoRow) {
+      if (activePromoDiscount > 0) {
+        promoRow.style.display = 'flex';
+        promoDiscountEl.innerText = '-₹' + activePromoDiscount.toLocaleString('en-IN');
+      } else {
+        promoRow.style.display = 'none';
+      }
+    }
+
+    const subtotal = Math.max(9500, base + hotelAdj + incTotal - fareDiscount - activePromoDiscount);
+    const gst = Math.round(subtotal * 0.05);
+    const grand = subtotal + gst;
+
+    if (basePriceEl) basePriceEl.innerText = '₹' + base.toLocaleString('en-IN');
+    if (hotelPriceEl) hotelPriceEl.innerText = (hotelAdj >= 0 ? '+₹' : '-₹') + Math.abs(hotelAdj).toLocaleString('en-IN');
+    if (incPriceEl) incPriceEl.innerText = '+₹' + incTotal.toLocaleString('en-IN');
+    if (subtotalEl) subtotalEl.innerText = '₹' + subtotal.toLocaleString('en-IN');
+    if (gstEl) gstEl.innerText = '₹' + gst.toLocaleString('en-IN');
+    if (grandTotalEl) grandTotalEl.innerText = '₹' + grand.toLocaleString('en-IN');
+    if (hiddenBase) hiddenBase.value = subtotal;
+    if (hiddenTotal) hiddenTotal.value = grand;
+  }
+
+  function applyPromo() {
+    const code = (promoInput.value || '').trim().toUpperCase();
+    if (!code) {
+      activePromoDiscount = 0;
+      promoFeedback.innerText = '';
+      recalculate();
+      return;
+    }
+
+    if (code === 'MMTKERALA') {
+      activePromoDiscount = 4500;
+      promoFeedback.innerText = '✓ Promo Code MMTKERALA applied: Flat 15% / ₹4,500 Off!';
+      promoFeedback.style.color = '#155724';
+    } else if (code === 'HOUSEBOAT3K') {
+      activePromoDiscount = 3000;
+      promoFeedback.innerText = '✓ Houseboat Promo Applied: Flat ₹3,000 Off!';
+      promoFeedback.style.color = '#155724';
+    } else if (code === 'ICICITRAVEL' || code === 'BANKFEST25') {
+      activePromoDiscount = 2500;
+      promoFeedback.innerText = '✓ Bank Offer Applied: Instant ₹2,500 Cashback!';
+      promoFeedback.style.color = '#155724';
+    } else if (code === 'MMTDIWALI') {
+      activePromoDiscount = 3500;
+      promoFeedback.innerText = '✓ Diwali Festive Offer: ₹3,500 Off!';
+      promoFeedback.style.color = '#155724';
+    } else {
+      activePromoDiscount = 1000;
+      promoFeedback.innerText = '✓ Special Voucher Applied: ₹1,000 Off!';
+      promoFeedback.style.color = '#155724';
+    }
+    recalculate();
+  }
+
+  if (applyPromoBtn) applyPromoBtn.addEventListener('click', applyPromo);
+  if (daysSelect) daysSelect.addEventListener('change', recalculate);
+  tierRadios.forEach(r => r.addEventListener('change', () => {
+    document.querySelectorAll('.tier-radio-card').forEach(c => c.classList.remove('active'));
+    r.closest('.tier-radio-card').classList.add('active');
+    recalculate();
+  }));
+  extraIncs.forEach(i => i.addEventListener('change', recalculate));
+  fareRadios.forEach(fr => fr.addEventListener('change', () => {
+    document.querySelectorAll('.fare-option').forEach(f => f.classList.remove('active'));
+    fr.closest('.fare-option').classList.add('active');
+    recalculate();
+  }));
+
+  // Initial calculation
+  if (promoInput && promoInput.value) applyPromo();
+  else recalculate();
+</script>
+

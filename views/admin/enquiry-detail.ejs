@@ -1,0 +1,149 @@
+<%- layout("/layout/admin") %>
+
+<div class="admin-head">
+  <div>
+    <a href="/admin/enquiries">← All enquiries</a>
+    <h1><%= enquiry.name %></h1>
+    <p>
+      <%= enquiry.email %> · <%= enquiry.phone || 'No phone given' %> · 
+      Source: <strong><%= enquiry.source %></strong> · 
+      Fare Category: <strong><%= enquiry.fareType || 'Regular' %></strong>
+      <% if (enquiry.promoCode) { %>
+        · Promo: <span class="tag-discount"><%= enquiry.promoCode %></span>
+      <% } %>
+    </p>
+  </div>
+  <div style="display:flex; align-items:center; gap:0.6rem;">
+    <span class="pill <%= enquiry.status %>"><%= enquiry.status.replace('_',' ') %></span>
+    <% if (enquiry.quote) { %>
+      <a href="/quotes/<%= enquiry.quote._id || enquiry.quote %>" target="_blank" class="button">View Generated Quote #<%= enquiry.quote.quoteNumber || '' %> ↗</a>
+    <% } else { %>
+      <a href="/admin/quotes/new?enquiryId=<%= enquiry._id %>" class="button">+ Generate Branded Quote</a>
+    <% } %>
+  </div>
+</div>
+
+<div class="inbox-grid">
+  <!-- Main Column: Messages & Staff Reply Box -->
+  <main>
+    <!-- Custom Package Specification if submitted via Custom Builder or AI Planner -->
+    <% if (enquiry.customPackage) { %>
+      <section class="admin-card custom-pkg-card" style="border-left: 4px solid var(--leaf); background:#f4f9f6;">
+        <span class="eyebrow" style="color:var(--leaf);">Custom Itinerary Configuration</span>
+        <h3>Bespoke Trip Specification</h3>
+        <p>
+          Destinations: <strong><%= (enquiry.customPackage.destinations || []).join(" → ") %></strong><br>
+          Duration: <strong><%= enquiry.customPackage.days %> Days / <%= enquiry.customPackage.nights %> Nights</strong><br>
+          Hotel Tier: <strong><%= enquiry.customPackage.hotelCategory %></strong><br>
+          <% if (enquiry.customPackage.hotels && enquiry.customPackage.hotels.length) { %>
+            Selected Hotels: <em><%= enquiry.customPackage.hotels.join(", ") %></em><br>
+          <% } %>
+          Estimated Amount: <strong>₹<%= (enquiry.customPackage.totalAmount || 0).toLocaleString("en-IN") %></strong> (Twin sharing + 5% GST)
+        </p>
+      </section>
+    <% } %>
+
+    <!-- Conversation Thread -->
+    <section class="admin-card conversation">
+      <h2>Conversation Thread</h2>
+      <% enquiry.messages.forEach(m => { %>
+        <div class="message <%= m.direction %>">
+          <small><%= m.direction === 'system' ? 'Instant acknowledgement' : (m.author || m.direction) %> · <%= m.createdAt.toLocaleString('en-IN') %></small>
+          <p><%= m.text %></p>
+        </div>
+      <% }) %>
+    </section>
+
+    <!-- Reply Form with AI Draft & Custom Reply Controls -->
+    <section class="admin-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.75rem;">
+        <div>
+          <h2 style="margin:0; font-size:1.15rem;">Reply to Guest</h2>
+          <small class="muted">Send a personalized custom message or review AI draft</small>
+        </div>
+        <form method="POST" action="/admin/enquiries/<%= enquiry._id %>/regenerate-ai" style="margin:0;">
+          <button type="submit" class="ghost" style="font-size:0.8rem; padding:0.4rem 0.75rem;">✨ Regenerate AI Reply Draft</button>
+        </form>
+      </div>
+
+      <form method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+        <label>
+          Message Body
+          <textarea name="reply" rows="5" placeholder="Write a custom personal reply or use the AI draft above…"><%= enquiry.ai && enquiry.ai.draftReply ? enquiry.ai.draftReply : '' %></textarea>
+        </label>
+        <input type="hidden" name="status" value="in_progress">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
+          <span class="small muted">Updates status to 'In Progress' and logs to conversation history.</span>
+          <button class="button">Send Reply to Guest →</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Sidebar: AI Extraction, Suggestions & Workflow Management -->
+  <aside>
+    <!-- AI Package Matcher & Extracted Facts -->
+    <section class="admin-card ai">
+      <span class="eyebrow">AI Package Matcher</span>
+      <h2>Personalised Journey Fit</h2>
+      <p><%= enquiry.ai.personalizedPlan || 'Review the enquiry, then use the matching packages below to prepare a custom trip.' %></p>
+      
+      <p><b>Best-Fit Packages:</b></p>
+      <% (enquiry.ai.suggestions || []).forEach(pkg => { %>
+        <p style="margin-bottom:0.6rem;">
+          <b><a href="/journeys/<%= pkg.slug %>" target="_blank"><%= pkg.title %> ↗</a></b><br>
+          <small><%= pkg.days %> days · <%= pkg.destinations.join(', ') %></small>
+        </p>
+      <% }) %>
+
+      <hr>
+
+      <span class="eyebrow">Extracted Details</span>
+      <dl>
+        <dt>Dates</dt>
+        <dd><%= enquiry.ai.dates || 'Needs review' %></dd>
+        <dt>Travellers</dt>
+        <dd><%= enquiry.ai.travellers || 'Needs review' %></dd>
+        <dt>Destination</dt>
+        <dd><%= enquiry.ai.destination || 'Needs review' %></dd>
+        <dt>Budget</dt>
+        <dd><%= enquiry.ai.budget || 'Needs review' %></dd>
+        <dt>Must Have</dt>
+        <dd><%= enquiry.ai.mustHave || 'Needs review' %></dd>
+      </dl>
+
+      <form method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+        <input type="hidden" name="acceptAi" value="true">
+        <button class="ghost full" <%= enquiry.ai.acceptedAt ? 'disabled' : '' %>>
+          <%= enquiry.ai.acceptedAt ? '✓ AI Summary Accepted' : 'Accept Recommendation' %>
+        </button>
+      </form>
+    </section>
+
+    <!-- Staff Assignment & Workflow Controls -->
+    <form class="admin-card" method="POST" action="/admin/enquiries/<%= enquiry._id %>?_method=PUT">
+      <h2>Workflow Controls</h2>
+      
+      <label>
+        Assigned Consultant
+        <input name="assignedTo" value="<%= enquiry.assignedTo || '' %>" placeholder="e.g. Arjun Menon (Kochi Operations)">
+      </label>
+
+      <label>
+        Internal Staff Notes
+        <textarea name="notes" rows="3" placeholder="Add internal notes about special preferences, hotel room upgrades..."><%= enquiry.notes || '' %></textarea>
+      </label>
+
+      <label>
+        Status
+        <select name="status">
+          <% ['new', 'in_progress', 'quoted', 'closed'].forEach(s => { %>
+            <option value="<%= s %>" <%= enquiry.status === s ? 'selected' : '' %>><%= s.replace('_',' ') %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <button class="ghost full">Save Workflow Changes</button>
+    </form>
+  </aside>
+</div>

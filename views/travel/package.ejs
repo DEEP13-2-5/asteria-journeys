@@ -1,0 +1,180 @@
+<%- layout("/layout/travel") %>
+
+<main>
+  <!-- Package Hero Section -->
+  <section class="package-hero">
+    <div class="package-hero-image" style="background-image:url('<%= (pkg.image && pkg.image.url) || 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85' %>')"></div>
+    <div class="package-hero-copy">
+      <span class="eyebrow"><%= pkg.code %> · Private Curated Journey</span>
+      <h1><%= pkg.title %></h1>
+      <p><%= pkg.description %></p>
+      
+      <div class="facts">
+        <span><b><%= pkg.days %> Days</b> / <%= pkg.nights || (pkg.days - 1) %> Nights</span>
+        <span><b><%= pkg.hotelCategory %></b> Accommodations</span>
+        <span><b>Private AC</b> Chauffeur Transfers</span>
+        <span><b>24/7</b> Concierge</span>
+      </div>
+
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1rem;">
+        <a class="button" href="#enquire">Enquire About This Journey →</a>
+        <a class="ghost" href="/custom-package?dest=<%= encodeURIComponent(pkg.destinations[0] || 'Alleppey') %>">Customize in Builder ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Package Content & Pricing Breakdown -->
+  <section class="package-content">
+    <div>
+      <span class="eyebrow">The Rhythm of Your Days</span>
+      <h2>Come for the places.<br>Stay for the feeling.</h2>
+
+      <!-- Day-by-Day Itinerary -->
+      <div class="itinerary-wrapper">
+        <% pkg.itinerary.forEach(day => { %>
+          <article class="itinerary">
+            <b>DAY <%= String(day.day).padStart(2, "0") %></b>
+            <div>
+              <h3><%= day.title %></h3>
+              <p><%= day.description %></p>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+
+      <!-- Inclusions -->
+      <% if (pkg.inclusions && pkg.inclusions.length) { %>
+        <div class="package-inclusions-box">
+          <span class="eyebrow">What Is Included</span>
+          <h3>Thoughtful Inclusions for Every Guest</h3>
+          <ul class="inclusions-list">
+            <% pkg.inclusions.forEach(inc => { %>
+              <li>✓ <%= inc %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <!-- Hotels in this Package's Destinations ("some hotels places come acc to location") -->
+      <% if (hotels && hotels.length) { %>
+        <div class="package-hotels-box">
+          <span class="eyebrow">Accommodations by Location</span>
+          <h3>Stays Selected for this Route</h3>
+          <div class="pkg-hotels-grid">
+            <% hotels.forEach(h => { %>
+              <div class="pkg-hotel-card">
+                <div class="pkg-hotel-img" style="background-image:url('<%= h.image %>')"></div>
+                <div class="pkg-hotel-info">
+                  <strong><%= h.name %></strong>
+                  <span class="small">📍 <%= h.location %> · <%= h.starCategory %> · ★ <%= h.rating %></span>
+                  <p class="small muted"><%= h.description?.slice(0, 80) %>...</p>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Interactive Mapbox Route Map -->
+      <div class="map-wrap">
+        <span class="eyebrow">Route & Geography</span>
+        <h3>Explore the Journey Path</h3>
+        <div id="package-map" data-coordinates='<%- JSON.stringify(pkg.coordinates) %>'></div>
+      </div>
+    </div>
+
+    <!-- Right Sticky Pricing Panel -->
+    <aside class="price-panel">
+      <h3>Choose Your Season</h3>
+      <p class="small muted">Transparent rates per person on twin-sharing basis.</p>
+
+      <div class="seasonal-prices-list">
+        <% pkg.seasonalPrices.forEach((row, idx) => { %>
+          <div class="price-row <%= idx === 0 ? 'highlight-season' : '' %>">
+            <div>
+              <strong><%= row.label %></strong>
+              <small>Per person · Twin sharing basis</small>
+            </div>
+            <b>₹<%= row.price.toLocaleString("en-IN") %></b>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="price-notice-box">
+        <p class="small">✓ 5% GST itemized transparently.<br>
+        ✓ Private dedicated vehicle with chauffeur included.<br>
+        ✓ All tolls, parking, and daily breakfast covered.</p>
+      </div>
+
+      <a class="button full" href="#enquire">Make an Enquiry</a>
+      <a class="ghost full" style="margin-top:0.6rem; text-align:center; display:block;" href="/custom-package?dest=<%= encodeURIComponent(pkg.destinations[0] || 'Alleppey') %>">
+        Customize Itinerary ↗
+      </a>
+    </aside>
+  </section>
+
+  <!-- Enquiry Section (With MakeMyTrip style Special Fares & Promo Codes) -->
+  <section class="enquiry-section" id="enquire">
+    <div>
+      <span class="eyebrow">Start a Conversation · Kochi Operations Desk</span>
+      <h2>Make It Yours.</h2>
+      <p>Tell us a little about your dates and preferences. An itinerary specialist at our Kochi office will review your request and reply within the hour during working hours.</p>
+
+      <div class="enquiry-perks">
+        <div class="perk-item">
+          <strong>⚡ 1-Hour Response</strong>
+          <span>During 9AM–7PM working hours</span>
+        </div>
+        <div class="perk-item">
+          <strong>🛡️ DPDP Act 2023</strong>
+          <span>Strict personal data protection & privacy</span>
+        </div>
+        <div class="perk-item">
+          <strong>🏷️ Special Fares</strong>
+          <span>Armed Forces, Senior Citizen & GST benefits</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="enquiry-form" method="POST" action="/journeys/<%= pkg._id %>/enquiries">
+      <input type="text" name="name" required placeholder="Your full name *">
+      <input type="email" name="email" required placeholder="Email address *">
+      <input type="tel" name="phone" placeholder="Phone / WhatsApp number *">
+      <input type="text" name="travelDates" placeholder="Travel dates (e.g. Dec 18-24, Peak Season)">
+      <input type="text" name="travellers" placeholder="Number of travellers (e.g. 2 Adults, 1 Kid)">
+
+      <!-- Special Fare Selector in Enquiry Form -->
+      <div style="grid-column: span 2;">
+        <label class="form-label" style="font-weight:600; font-size:0.82rem; margin-bottom:0.3rem;">
+          Special Fare Category
+        </label>
+        <select name="fareType" class="form-input" style="padding:0.65rem;">
+          <option value="Regular" selected>Regular Fare</option>
+          <option value="Student">Student (Extra baggage & discounts)</option>
+          <option value="Armed Forces">Armed Forces (Serving/Retired & Dependents - ₹600 off)</option>
+          <option value="Senior Citizen">Senior Citizen (Ground floor rooms - ₹600 off)</option>
+          <option value="Doctor and Nurses">Doctor and Nurses (Healthcare warrior discount)</option>
+          <option value="Have a GST number?">GST Corporate Benefit (10% extra savings)</option>
+        </select>
+      </div>
+
+      <!-- Promo Code from Offers -->
+      <div style="grid-column: span 2;">
+        <input type="text" name="promoCode" placeholder="Promo code from offers (e.g. MMTKERALA or HOUSEBOAT3K)">
+      </div>
+
+      <textarea required name="message" placeholder="Tell us what you're looking for (e.g. A luxury houseboat is a must, lake view rooms, candlelight dinner…)"></textarea>
+
+      <label class="consent" style="grid-column: span 2;">
+        <input type="checkbox" name="whatsappConsent" value="true" checked>
+        I consent to WhatsApp follow-ups and receiving my custom quotation in compliance with the DPDP Act 2023.
+      </label>
+
+      <button type="submit" class="button" style="grid-column: span 2;">Send My Enquiry →</button>
+    </form>
+  </section>
+</main>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+<script>window.mapToken="<%= mapToken %>"</script>
+<script src="/js/travel-map.js"></script>

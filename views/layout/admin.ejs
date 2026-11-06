@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Asteria CMS · Operations Workspace</title>
+  <link rel="stylesheet" href="/css/travel.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+  <aside class="sidebar">
+    <a class="brand" href="/">ASTERIA <small>CMS</small></a>
+    
+    <div class="sidebar-links">
+      <a href="/admin/enquiries" class="sidebar-link">📥 Enquiries</a>
+      <% if (currUser.role === 'owner') { %>
+        <a href="/admin/packages" class="sidebar-link">🏖️ Package CMS</a>
+        <a href="/admin/blogs" class="sidebar-link">✍️ Blog CMS</a>
+      <% } %>
+      <a href="/admin/quotes" class="sidebar-link">📄 Branded Quotes</a>
+      <% if (currUser.role === 'owner') { %>
+        <a href="/admin/team" class="sidebar-link">👥 Team Staff</a>
+      <% } %>
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,0.15); margin:1rem 0;">
+      <a href="/" target="_blank" class="sidebar-link">🌐 View Public Site ↗</a>
+      <a href="/custom-package" target="_blank" class="sidebar-link">🛠️ Custom Builder ↗</a>
+      <a href="/ai-planner" target="_blank" class="sidebar-link">✨ AI Planner ↗</a>
+      <a href="/logout" class="sidebar-link" style="color:#ffb3b3;">🚪 Sign Out</a>
+    </div>
+
+    <small>
+      Signed in as <strong><%= currUser.username %></strong><br>
+      Role: <span style="text-transform:capitalize;"><%= currUser.role %></span>
+    </small>
+  </aside>
+
+  <main class="admin-main">
+    <%- include("../includes/flash.ejs") %>
+    <%- body %>
+  </main>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<%- layout("/layout/boilerplate") %>
+<div class="row">
+  <div class="col-8 offset-2">    
+    <h3>Create a New Listing</h3>
+    <br><br>
+    <form method="POST" action="/listings" novalidate class=" needs-validation" enctype="multipart/form-data">
+      
+      <!-- Title Input -->
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label> 
+        <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required/>
+        <div class="invalid-feedback">Write the title properly</div>
+      </div>
+
+      <!-- Description Input -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="listing[description]" class="form-control" required></textarea>
+        <div class="invalid-feedback">Write a short description</div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Image</label>
+        <input name="listing[image]" type="file" class="form-control"/>
+      </div>
+
+      <!-- Price and Country Inputs -->
+      <div class="row">
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <input name="listing[price]" placeholder="1200" type="number" class="form-control" required/>
+          <div class="invalid-feedback">Invalid price</div> 
+        </div>
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label">Country</label>
+          <input name="listing[country]" placeholder="India" type="text" class="form-control" required/>
+          <div class="invalid-feedback">Write country name properly</div>
+        </div>
+      </div>
+
+      <!-- Location Input -->
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input name="listing[location]" placeholder="Madgaon, Goa" type="text" class="form-control" required/>
+        <div class="invalid-feedback">Write location properly</div>
+      </div>
+
+    <div class="mb-3">
+      <label for="category" class="form-label">Enter Category og you location:</label>
+      <select class="form-control " name="listing[category]" required>
+            <option value="Others" selected disabled>Select a category</option>
+            <option class="dropdown-item" value="Trending">Trending</option>
+            <option value="Rooms">Rooms</option>
+            <option value="Iconic Cities">Iconic Cities</option>
+            <option value="Mountains">Mountains</option>
+            <option value="Castles">Castles</option>
+            <option value="Amazing-Pools">Amazing Pools</option>
+            <option value="Camping">Camping</option>
+            <option value="Farms">Farms</option>
+            <option value="Beach">Beach</option>
+          
+            <option value="Others">Others</option>
+      </select>
+</div>
+
+      <!-- Submit Button -->
+      <button class="btn btn-dark">Add</button>
+    </form>
+    <br><br>
+  </div>
+</div>

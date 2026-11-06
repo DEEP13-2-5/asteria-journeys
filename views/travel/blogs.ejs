@@ -1,0 +1,45 @@
+<%- layout("/layout/travel") %>
+
+<div class="blogs-hero">
+  <div class="blogs-hero-inner">
+    <span class="eyebrow">Asteria Editorial · Stories & Guides</span>
+    <h1>Stories from South India</h1>
+    <p>Honest guides, backwater navigation secrets, and cultural narratives curated by our Kochi travel team.</p>
+  </div>
+</div>
+
+<main class="section">
+  <!-- Category Filter & Search -->
+  <div class="blog-filter-bar">
+    <div class="blog-cats">
+      <% categories.forEach(cat => { %>
+        <a href="/blogs?category=<%= encodeURIComponent(cat) %>" class="blog-cat-pill <%= selectedCategory === cat ? 'active' : '' %>">
+          <%= cat %>
+        </a>
+      <% }) %>
+    </div>
+    <form class="blog-search" action="/blogs" method="GET">
+      <input type="text" name="q" value="<%= query %>" placeholder="Search guides & stories...">
+      <button type="submit" class="button">Search</button>
+    </form>
+  </div>
+
+  <div class="card-grid" style="margin-top: 3rem;">
+    <% blogs.forEach(blog => { %>
+      <article class="blog-card">
+        <a href="/blogs/<%= blog.slug %>" class="blog-image-link">
+          <div class="blog-image" style="background-image: url('<%= (blog.image && blog.image.url) || 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80' %>')">
+            <span class="blog-cat-badge"><%= blog.category %></span>
+          </div>
+        </a>
+        <div class="blog-card-copy">
+          <span class="small"><%= blog.readTime %> · By <%= blog.author %></span>
+          <h3><a href="/blogs/<%= blog.slug %>"><%= blog.title %></a></h3>
+          <p><%= blog.excerpt %></p>
+          <a class="read-more-link" href="/blogs/<%= blog.slug %>">Read Guide & View Journeys →</a>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+</main>
+

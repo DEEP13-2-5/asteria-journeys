@@ -1,0 +1,217 @@
+<%- layout("/layout/travel") %>
+
+<div class="quote-document-wrapper">
+  <!-- Top Action Bar (Print / PDF / Share) -->
+  <div class="quote-action-bar no-print">
+    <div class="quote-status-pill <%= quote.status %>">
+      Status: <%= quote.status.toUpperCase() %>
+    </div>
+    <div class="quote-buttons">
+      <button type="button" class="button" onclick="window.print()">🖨️ Print / Download PDF</button>
+      <button type="button" class="ghost" onclick="copyQuoteLink()">🔗 Copy Quote Link</button>
+      <% if (quote.status !== 'accepted') { %>
+        <form method="POST" action="/quotes/<%= quote._id %>/accept" class="inline">
+          <button type="submit" class="button" style="background: #198754;">✓ Accept Quote & Confirm</button>
+        </form>
+      <% } else { %>
+        <span class="accepted-badge">✓ Accepted by Guest</span>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Branded Paper Quotation Sheet -->
+  <div class="quote-sheet">
+    <!-- Header -->
+    <header class="quote-header">
+      <div>
+        <div class="brand quote-brand">
+          ASTERIA
+          <small>JOURNEYS · KOCHI</small>
+        </div>
+        <p class="company-sub">
+          Asteria Journeys India Pvt Ltd<br>
+          Marine Drive, Ernakulam, Kochi 682031, Kerala<br>
+          GSTIN: 32AABCA0000A1Z5<br>
+          Email: quotes@asteriajourneys.com
+        </p>
+      </div>
+
+      <div class="quote-meta-box">
+        <h2>OFFICIAL QUOTATION</h2>
+        <table class="quote-meta-table">
+          <tr>
+            <td>Quote No:</td>
+            <td><strong><%= quote.quoteNumber %></strong></td>
+          </tr>
+          <tr>
+            <td>Date:</td>
+            <td><%= new Date(quote.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) %></td>
+          </tr>
+          <tr>
+            <td>Valid Until:</td>
+            <td><%= new Date(quote.validUntil).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) %></td>
+          </tr>
+        </table>
+      </div>
+    </header>
+
+    <hr class="quote-divider">
+
+    <!-- Guest & Journey Details -->
+    <div class="quote-details-grid">
+      <div class="quote-box">
+        <span class="small eyebrow">PREPARED FOR</span>
+        <h4><%= quote.customerName %></h4>
+        <p>
+          Email: <%= quote.customerEmail %><br>
+          Phone: <%= quote.customerPhone || "Provided upon booking" %><br>
+          Travellers: <strong><%= quote.travellers %></strong>
+        </p>
+      </div>
+
+      <div class="quote-box">
+        <span class="small eyebrow">JOURNEY SPECIFICATIONS</span>
+        <h4><%= quote.packageTitle %></h4>
+        <p>
+          Destinations: <strong><%= quote.destinations.join(" → ") %></strong><br>
+          Duration: <strong><%= quote.days %> Days / <%= quote.nights %> Nights</strong><br>
+          Accommodation: <strong><%= quote.hotelCategory %></strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Selected Stays if available -->
+    <% if (quote.hotels && quote.hotels.length) { %>
+      <div class="quote-section">
+        <h4>Confirmed / Recommended Accommodations</h4>
+        <ul class="quote-hotels-list">
+          <% quote.hotels.forEach(h => { %>
+            <li>🏨 <%= h %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <!-- Day-by-Day Itinerary -->
+    <div class="quote-section">
+      <h4>Day-by-Day Itinerary</h4>
+      <div class="quote-itinerary-table">
+        <% (quote.itinerary || []).forEach(day => { %>
+          <div class="quote-itinerary-row">
+            <span class="it-day">Day <%= day.day %></span>
+            <div class="it-body">
+              <strong><%= day.title %></strong>
+              <p><%= day.description %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Inclusions -->
+    <% if (quote.inclusions && quote.inclusions.length) { %>
+      <div class="quote-section">
+        <h4>Inclusions & Privileges</h4>
+        <ul class="quote-inc-grid">
+          <% quote.inclusions.forEach(inc => { %>
+            <li>✓ <%= inc %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <!-- Transparent Financial Quotation Table -->
+    <div class="quote-pricing-section">
+      <h4>Investment Breakdown (Twin Sharing Basis)</h4>
+      <table class="quote-pricing-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Rate Type</th>
+            <th class="text-right">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong><%= quote.packageTitle %></strong><br>
+              <small><%= quote.days %> Days / <%= quote.nights %> Nights private vehicle & accommodation</small>
+            </td>
+            <td>Per Person Twin Sharing</td>
+            <td class="text-right">₹<%= quote.basePricePerPerson.toLocaleString("en-IN") %></td>
+          </tr>
+
+          <% if (quote.specialDiscount > 0) { %>
+            <tr class="discount-line">
+              <td>Special Fare Benefit (<%= quote.fareType %>)</td>
+              <td>Concession Applied</td>
+              <td class="text-right">-₹<%= quote.specialDiscount.toLocaleString("en-IN") %></td>
+            </tr>
+          <% } %>
+
+          <% if (quote.promoDiscount > 0) { %>
+            <tr class="discount-line">
+              <td>Promo Offer Discount (Code: <%= quote.promoCode %>)</td>
+              <td>Promotional Savings</td>
+              <td class="text-right">-₹<%= quote.promoDiscount.toLocaleString("en-IN") %></td>
+            </tr>
+          <% } %>
+
+          <tr>
+            <td><strong>Net Subtotal</strong></td>
+            <td>Before GST</td>
+            <td class="text-right"><strong>₹<%= quote.subtotal.toLocaleString("en-IN") %></strong></td>
+          </tr>
+
+          <tr>
+            <td>Goods & Services Tax (GST 5%)</td>
+            <td>Statutory Compliance</td>
+            <td class="text-right">₹<%= quote.gstAmount.toLocaleString("en-IN") %></td>
+          </tr>
+
+          <tr class="total-row">
+            <td>
+              <strong>TOTAL PAYABLE</strong><br>
+              <small>All taxes & chauffeur transfers included</small>
+            </td>
+            <td><strong>Twin Sharing Basis</strong></td>
+            <td class="text-right">
+              <strong class="total-price">₹<%= quote.totalAmount.toLocaleString("en-IN") %></strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="small text-right muted">Prices are in Indian Rupees (INR) per person on twin-sharing basis. GST itemized transparently.</p>
+    </div>
+
+    <!-- Notes & Legal Terms -->
+    <div class="quote-terms-section">
+      <span class="small eyebrow">TERMS & IMPORTANT INFORMATION</span>
+      <p class="small">
+        • This quotation is generated by Asteria Journeys, Kochi and remains valid until <%= new Date(quote.validUntil).toLocaleDateString("en-IN") %>.<br>
+        • Accommodation rooms are subject to live availability upon quote acceptance.<br>
+        • Chauffeur duty is capped in accordance with South India tourist transport regulations.<br>
+        • Guest data is managed strictly under the Digital Personal Data Protection (DPDP) Act 2023.
+      </p>
+    </div>
+
+    <!-- Signature Block -->
+    <footer class="quote-footer-stamp">
+      <div>
+        <p class="small">Authorised by: <strong>Asteria Journeys Operations Desk</strong><br>Kochi, Kerala</p>
+      </div>
+      <div class="seal-box">
+        <span class="official-seal">ASTERIA JOURNEYS · VERIFIED QUOTE</span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+  function copyQuoteLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      alert('Quote link copied to clipboard!');
+    });
+  }
+</script>
+

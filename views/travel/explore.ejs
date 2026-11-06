@@ -1,0 +1,119 @@
+<%- layout("/layout/travel") %>
+
+<div class="explore-hero">
+  <div class="explore-hero-inner">
+    <span class="eyebrow">Destination Intelligence · Kerala & South India</span>
+    <h1>Explore Stays & Sights by Location</h1>
+    <p>Discover handpicked boutique heritage hotels, backwater houseboats, tea estate villas, and iconic sightseeing spots sorted by town.</p>
+  </div>
+</div>
+
+<div class="section explore-container">
+  <!-- Location Selector Bar -->
+  <div class="location-tabs-bar">
+    <a href="/explore?location=All" class="loc-filter-tab <%= selectedLocation === 'All' ? 'active' : '' %>">All Locations</a>
+    <% locations.forEach(loc => { %>
+      <a href="/explore?location=<%= encodeURIComponent(loc) %>" class="loc-filter-tab <%= selectedLocation.toLowerCase() === loc.toLowerCase() ? 'active' : '' %>">
+        <%= loc %>
+      </a>
+    <% }) %>
+  </div>
+
+  <!-- Hotels Section -->
+  <div class="explore-section-block">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Verified Accommodations</span>
+        <h2>Curated Hotels & Stays in <%= selectedLocation %></h2>
+        <p class="muted">Per person twin-sharing basis with complimentary breakfast and verified amenities.</p>
+      </div>
+      <a href="/custom-package?dest=<%= encodeURIComponent(selectedLocation) %>" class="button">Build Trip in <%= selectedLocation %> →</a>
+    </div>
+
+    <div class="hotel-cards-grid">
+      <% hotels.forEach(hotel => { %>
+        <div class="hotel-card">
+          <div class="hotel-img" style="background-image: url('<%= hotel.image %>')">
+            <span class="hotel-star-tag"><%= hotel.starCategory %></span>
+            <span class="hotel-loc-tag">📍 <%= hotel.location %></span>
+          </div>
+          <div class="hotel-details">
+            <div class="hotel-title-row">
+              <h4><%= hotel.name %></h4>
+              <span class="hotel-rating">★ <%= hotel.rating %> <small>(<%= hotel.reviewsCount %>)</small></span>
+            </div>
+            <p class="hotel-desc"><%= hotel.description %></p>
+            <div class="hotel-amenities">
+              <% (hotel.amenities || []).slice(0, 3).forEach(am => { %>
+                <span class="am-tag"><%= am %></span>
+              <% }) %>
+            </div>
+            <div class="hotel-footer-row">
+              <div class="hotel-price-box">
+                <span class="price-from">From</span>
+                <strong>₹<%= hotel.pricePerNight.toLocaleString("en-IN") %></strong>
+                <small>/ night</small>
+              </div>
+              <a href="/custom-package?hotel=<%= encodeURIComponent(hotel.name) %>&dest=<%= encodeURIComponent(hotel.location) %>" class="button btn-add-package">+ Add to Custom Package</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Places Section -->
+  <div class="explore-section-block" style="margin-top: 4rem;">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Sightseeing & Culture</span>
+        <h2>Must-Visit Places & Experiences in <%= selectedLocation %></h2>
+      </div>
+    </div>
+
+    <div class="places-cards-grid">
+      <% places.forEach(place => { %>
+        <div class="place-card">
+          <div class="place-img" style="background-image: url('<%= place.image %>')">
+            <span class="place-category-badge"><%= place.category %></span>
+            <span class="place-loc-badge">📍 <%= place.location %></span>
+          </div>
+          <div class="place-content">
+            <h4><%= place.name %></h4>
+            <p class="place-desc"><%= place.description %></p>
+            <div class="place-meta">
+              <span>⏱️ <%= place.duration %></span>
+              <span>☀️ <%= place.bestTimeToVisit %></span>
+            </div>
+            <ul class="place-highlights">
+              <% (place.highlights || []).forEach(hl => { %>
+                <li>✓ <%= hl %></li>
+              <% }) %>
+            </ul>
+            <a href="/custom-package?dest=<%= encodeURIComponent(place.location) %>" class="place-add-link">+ Include in Custom Itinerary →</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Packages Covering this Location -->
+  <% if (packages && packages.length) { %>
+    <div class="explore-section-block" style="margin-top: 4rem;">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Ready-Made Packages</span>
+          <h2>Journeys that visit <%= selectedLocation %></h2>
+        </div>
+        <a href="/journeys?destination=<%= encodeURIComponent(selectedLocation) %>" class="view-all-link">View All →</a>
+      </div>
+
+      <div class="card-grid">
+        <% packages.forEach(pkg => { %>
+          <%- include("_card", { pkg }) %>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</div>
+

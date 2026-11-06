@@ -1,0 +1,130 @@
+<%- layout("/layout/admin") %>
+
+<div class="admin-head">
+  <div>
+    <span class="eyebrow">Quote Builder</span>
+    <h1>Generate Branded Quotation</h1>
+    <p>Craft a formal price quotation with Company A Kochi credentials, PDF download, and online approval link.</p>
+  </div>
+  <a href="/admin/quotes">← All Quotes</a>
+</div>
+
+<form class="editor-grid" method="POST" action="/admin/quotes">
+  <% if (enquiry) { %>
+    <input type="hidden" name="enquiryId" value="<%= enquiry._id %>">
+  <% } %>
+
+  <main>
+    <section class="admin-card">
+      <h2>Guest Details</h2>
+      <div class="two">
+        <label>
+          Guest Full Name *
+          <input name="customerName" required value="<%= enquiry ? enquiry.name : '' %>" placeholder="e.g. Vikram Sharma">
+        </label>
+        <label>
+          Email Address *
+          <input type="email" name="customerEmail" required value="<%= enquiry ? enquiry.email : '' %>" placeholder="e.g. vikram@example.com">
+        </label>
+      </div>
+
+      <div class="two">
+        <label>
+          Phone Number
+          <input name="customerPhone" value="<%= enquiry ? enquiry.phone : '' %>" placeholder="Guest contact number">
+        </label>
+        <label>
+          Travellers / Group Size
+          <input name="travellers" value="<%= enquiry ? enquiry.travellers : '2 Adults (Twin Sharing)' %>" placeholder="e.g. 2 Adults, 1 Child">
+        </label>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <h2>Journey & Package Selection</h2>
+      
+      <label>
+        Select Base Package
+        <select name="packageId" id="pkg-select" onchange="onPackageSelect(this)">
+          <option value="">-- Custom Package (No base template) --</option>
+          <% packages.forEach(pkg => { %>
+            <option value="<%= pkg._id %>" 
+                    data-days="<%= pkg.days %>" 
+                    data-price="<%= pkg.seasonalPrices[0]?.price || 25000 %>"
+                    data-title="<%= pkg.title %>">
+              <%= pkg.code %> · <%= pkg.title %> (<%= pkg.days %> Days · ₹<%= (pkg.seasonalPrices[0]?.price || 0).toLocaleString("en-IN") %>)
+            </option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label>
+        Package / Journey Title
+        <input name="packageTitle" id="pkg-title" value="<%= enquiry?.package ? enquiry.package.title : 'Custom Kerala Private Journey' %>">
+      </label>
+
+      <div class="two">
+        <label>
+          Duration (Days)
+          <input type="number" name="days" id="pkg-days" min="1" value="6">
+        </label>
+        <label>
+          Base Price Per Person (₹)
+          <input type="number" name="basePrice" id="pkg-price" min="1000" value="32500">
+        </label>
+      </div>
+
+      <label>
+        Special Notes / Included Highlights for Quote
+        <textarea name="notes" rows="3" placeholder="e.g. Private luxury 1-bedroom AC houseboat included in Alleppey with Karimeen dinner..."><%= enquiry?.notes || '' %></textarea>
+      </label>
+    </section>
+  </main>
+
+  <aside>
+    <section class="admin-card">
+      <h2>Fares & Concessions</h2>
+      
+      <label>
+        Fare Type
+        <select name="fareType">
+          <option value="Regular" selected>Regular Fare</option>
+          <option value="Student">Student (-₹500)</option>
+          <option value="Armed Forces">Armed Forces (-₹600)</option>
+          <option value="Senior Citizen">Senior Citizen (-₹600)</option>
+          <option value="Doctor and Nurses">Healthcare Warriors (-₹600)</option>
+          <option value="Have a GST number?">GST Corporate Benefit</option>
+        </select>
+      </label>
+
+      <label>
+        Promo Offer Code
+        <input name="promoCode" placeholder="e.g. MMTKERALA" value="<%= enquiry?.promoCode || '' %>">
+      </label>
+
+      <label>
+        Promotional Discount Amount (₹)
+        <input type="number" name="promoDiscount" value="0" placeholder="0">
+      </label>
+
+      <p class="small muted">5% GST will be calculated and itemized automatically on the official branded document.</p>
+    </section>
+
+    <div class="admin-card">
+      <button type="submit" class="button full">Generate Branded Quote →</button>
+      <a href="/admin/quotes" class="ghost full" style="margin-top:0.6rem; text-align:center; display:block;">Cancel</a>
+    </div>
+  </aside>
+</form>
+
+<script>
+  function onPackageSelect(select) {
+    const opt = select.options[select.selectedIndex];
+    if (opt.value) {
+      document.getElementById('pkg-title').value = opt.dataset.title;
+      document.getElementById('pkg-days').value = opt.dataset.days;
+      document.getElementById('pkg-price').value = opt.dataset.price;
+    }
+  }
+</script>
+

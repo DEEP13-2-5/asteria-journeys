@@ -1,0 +1,591 @@
+<%- layout("/layout/travel") %>
+
+<!-- MakeMyTrip Style Main Booking & Search Section -->
+<div class="mmt-hero-container">
+  <div class="mmt-search-card">
+    <!-- Top Category Navigation (MakeMyTrip Style Icons & Tabs) -->
+    <div class="mmt-nav-tabs">
+      <a href="/journeys" class="mmt-tab active" data-type="holidays">
+        <span class="mmt-tab-icon">🏖️</span>
+        <span class="mmt-tab-label">Holiday Packages</span>
+      </a>
+      <a href="/explore" class="mmt-tab" data-type="hotels">
+        <span class="mmt-tab-icon">🏨</span>
+        <span class="mmt-tab-label">Hotels</span>
+      </a>
+      <a href="/explore?location=Alleppey" class="mmt-tab" data-type="villas">
+        <span class="mmt-tab-icon">🛶</span>
+        <span class="mmt-tab-label">Villas & Houseboats</span>
+      </a>
+      <a href="/custom-package" class="mmt-tab" data-type="custom">
+        <span class="mmt-tab-icon">🛠️</span>
+        <span class="mmt-tab-label">Custom Package</span>
+      </a>
+      <a href="/ai-planner" class="mmt-tab" data-type="ai">
+        <span class="mmt-tab-icon">✨</span>
+        <span class="mmt-tab-label">AI Trip Planner</span>
+      </a>
+      <a href="/journeys?destination=Kerala" class="mmt-tab" data-type="flights">
+        <span class="mmt-tab-icon">✈️</span>
+        <span class="mmt-tab-label">Flights + Tour</span>
+      </a>
+      <a href="/journeys?destination=Madurai" class="mmt-tab" data-type="trains">
+        <span class="mmt-tab-icon">🚆</span>
+        <span class="mmt-tab-label">Trains</span>
+      </a>
+      <a href="/custom-package" class="mmt-tab" data-type="cabs">
+        <span class="mmt-tab-icon">🚗</span>
+        <span class="mmt-tab-label">Cabs & Transfers</span>
+      </a>
+      <a href="/explore" class="mmt-tab" data-type="activities">
+        <span class="mmt-tab-icon">🎪</span>
+        <span class="mmt-tab-label">Sightseeing & Tours</span>
+      </a>
+    </div>
+
+    <!-- Search Form -->
+    <form class="mmt-search-form" action="/journeys" method="GET">
+      <!-- Trip Options Radio (One Way, Round Trip, Multi City / Custom) -->
+      <div class="mmt-sub-type-row">
+        <label class="radio-label">
+          <input type="radio" name="tripType" value="circuit" checked>
+          <span class="radio-custom"></span> Round Trip Circuit
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="tripType" value="custom" onclick="window.location.href='/custom-package'">
+          <span class="radio-custom"></span> Custom Multi-City Tour
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="tripType" value="ai" onclick="window.location.href='/ai-planner'">
+          <span class="radio-custom"></span> AI Planned Itinerary
+        </label>
+        <span class="mmt-badge-new">NEW: Private Cab + 4★ Resort Included</span>
+      </div>
+
+      <!-- Core Search Grid -->
+      <div class="mmt-fields-grid">
+        <!-- From Field -->
+        <div class="mmt-field-box">
+          <span class="mmt-field-label">From (Departure City)</span>
+          <div class="mmt-field-val">Kochi</div>
+          <div class="mmt-field-sub">COK, Cochin International Airport</div>
+          <input type="hidden" name="fromCity" value="Kochi">
+        </div>
+
+        <!-- Destination Selector -->
+        <div class="mmt-field-box select-box">
+          <span class="mmt-field-label">To (Destination / Region)</span>
+          <select name="destination" class="mmt-select" id="destination-select">
+            <option value="All">All South India & Kerala</option>
+            <option value="Kerala" selected>Kerala (Munnar, Thekkady, Alleppey)</option>
+            <option value="Munnar">Munnar (Tea Plantations & Valleys)</option>
+            <option value="Alleppey">Alleppey (Backwaters & Houseboat)</option>
+            <option value="Thekkady">Thekkady (Periyar Wildlife & Spices)</option>
+            <option value="Wayanad">Wayanad (Rainforest & Treehouses)</option>
+            <option value="Kovalam">Kovalam & Varkala (Cliffs & Coast)</option>
+            <option value="Madurai">Madurai & Rameswaram (Temple Trail)</option>
+            <option value="Kanyakumari">Kanyakumari (Cape Comorin Confluence)</option>
+          </select>
+          <div class="mmt-field-sub">God's Own Country & South India</div>
+        </div>
+
+        <!-- Departure Date -->
+        <div class="mmt-field-box">
+          <span class="mmt-field-label">Departure Date</span>
+          <input type="date" name="departureDate" class="mmt-date-input" value="<%= new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0] %>">
+          <div class="mmt-field-sub">Flexible seasonal departure</div>
+        </div>
+
+        <!-- Duration & Days -->
+        <div class="mmt-field-box select-box">
+          <span class="mmt-field-label">Duration</span>
+          <select name="days" class="mmt-select">
+            <option value="All">Any Duration</option>
+            <option value="short">Short Break (3 - 4 Days)</option>
+            <option value="medium" selected>Standard Tour (5 - 7 Days)</option>
+            <option value="long">Grand Holiday (8+ Days)</option>
+          </select>
+          <div class="mmt-field-sub">Paced for slow travel</div>
+        </div>
+
+        <!-- Travellers & Rooms -->
+        <div class="mmt-field-box">
+          <span class="mmt-field-label">Travellers & Rooms</span>
+          <div class="mmt-travellers-selector">
+            <select name="travellers" class="mmt-select">
+              <option value="2 Adults, 1 Room" selected>2 Adults · 1 Room (Twin Sharing)</option>
+              <option value="2 Adults 1 Child, 1 Room">2 Adults + 1 Kid · 1 Room</option>
+              <option value="4 Adults, 2 Rooms">4 Adults · 2 Rooms (Family)</option>
+              <option value="6+ Adults, Group">6+ Adults · Private Group</option>
+              <option value="Solo Traveller, 1 Room">1 Adult · Solo Traveller</option>
+            </select>
+            <div class="mmt-field-sub">Per person on twin sharing basis</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MakeMyTrip Style "Select a Special Fare" Section (Image 1) -->
+      <div class="mmt-special-fares-wrap">
+        <div class="special-fares-label">
+          <span>Select a</span>
+          <strong>special fare</strong>
+        </div>
+
+        <div class="special-fares-list">
+          <!-- Regular Fare -->
+          <label class="fare-card <%= selectedFare === 'regular' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Regular" <%= selectedFare === 'regular' ? 'checked' : '' %>>
+            <div class="fare-info">
+              <span class="fare-title">Regular</span>
+              <span class="fare-sub">Regular fares</span>
+            </div>
+          </label>
+
+          <!-- Student Fare -->
+          <label class="fare-card <%= selectedFare === 'student' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Student">
+            <div class="fare-info">
+              <span class="fare-title">Student</span>
+              <span class="fare-sub">Extra discounts / ₹500 off</span>
+            </div>
+          </label>
+
+          <!-- Armed Forces Fare (With Tooltip from Screenshot 1) -->
+          <label class="fare-card has-tooltip <%= selectedFare === 'armed-forces' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Armed Forces">
+            <div class="fare-info">
+              <span class="fare-title">Armed Forces</span>
+              <span class="fare-sub">Up to ₹600 off</span>
+            </div>
+            <div class="fare-tooltip">
+              Applicable only for serving/retired Indian Armed Forces personnel & their dependents. A valid Armed Forces ID or dependent card is required at booking.
+            </div>
+          </label>
+
+          <!-- GST Number Savings -->
+          <label class="fare-card has-badge <%= selectedFare === 'gst' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Have a GST number?">
+            <div class="fare-info">
+              <span class="fare-title">Have a GST number? <span class="tag-new">new</span></span>
+              <span class="fare-sub">Upto 10% extra savings!</span>
+            </div>
+          </label>
+
+          <!-- Senior Citizen -->
+          <label class="fare-card <%= selectedFare === 'senior' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Senior Citizen">
+            <div class="fare-info">
+              <span class="fare-title">Senior Citizen</span>
+              <span class="fare-sub">Up to ₹600 off</span>
+            </div>
+          </label>
+
+          <!-- Doctors and Nurses -->
+          <label class="fare-card <%= selectedFare === 'medical' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Doctor and Nurses">
+            <div class="fare-info">
+              <span class="fare-title">Doctor and Nurses</span>
+              <span class="fare-sub">Up to ₹600 off</span>
+            </div>
+          </label>
+
+          <!-- Honeymoon Special -->
+          <label class="fare-card <%= selectedFare === 'honeymoon' ? 'active' : '' %>">
+            <input type="radio" name="fareType" value="Honeymoon Special">
+            <div class="fare-info">
+              <span class="fare-title">Honeymoon Special</span>
+              <span class="fare-sub">Candlelight dinner + cake</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Search Submit Button -->
+      <div class="mmt-search-action">
+        <button type="submit" class="mmt-search-btn">SEARCH JOURNEYS</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MakeMyTrip Style Offers Section (Screenshot 1 & Screenshot 2) -->
+<section class="section mmt-offers-section" id="offers">
+  <div class="offers-header-row">
+    <div class="offers-title-group">
+      <h2>Offers</h2>
+      <!-- Category Tabs (Screenshot 2: All Offers, Holidays, Hotels, Flights, Bank Offers, Trains, Cabs) -->
+      <div class="offers-category-tabs">
+        <button type="button" class="offer-cat-tab active" data-category="all">All Offers</button>
+        <button type="button" class="offer-cat-tab" data-category="holidays">Holidays</button>
+        <button type="button" class="offer-cat-tab" data-category="hotels">Hotels</button>
+        <button type="button" class="offer-cat-tab" data-category="flights">Flights</button>
+        <button type="button" class="offer-cat-tab" data-category="bank">Bank Offers</button>
+        <button type="button" class="offer-cat-tab" data-category="trains">Trains</button>
+        <button type="button" class="offer-cat-tab" data-category="cabs">Cabs</button>
+      </div>
+    </div>
+
+    <!-- View All & Carousel Controls -->
+    <div class="offers-nav-group">
+      <a href="/custom-package" class="view-all-link">VIEW ALL OFFERS →</a>
+      <div class="carousel-arrows">
+        <button type="button" class="arrow-btn" id="offers-prev" aria-label="Previous offers">‹</button>
+        <button type="button" class="arrow-btn" id="offers-next" aria-label="Next offers">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offers Grid / Carousel -->
+  <div class="offers-carousel-container" id="offers-carousel">
+    <% offers.forEach(offer => { %>
+      <div class="offer-card" data-category="<%= offer.category %>">
+        <div class="offer-card-media" style="background-image: url('<%= offer.image %>');">
+          <span class="offer-badge"><%= offer.badge || offer.categoryLabel %></span>
+        </div>
+        <div class="offer-card-content">
+          <div class="offer-meta-row">
+            <span class="offer-cat-pill"><%= offer.categoryLabel %></span>
+            <button type="button" class="offer-tc-link" onclick="openTcModal('<%= offer.title.replace(/'/g, "\\'") %>', '<%= offer.tc.replace(/'/g, "\\'") %>')">T&C's APPLY</button>
+          </div>
+          <h3 class="offer-title"><%= offer.title %></h3>
+          <p class="offer-subtitle"><%= offer.subtitle %></p>
+          
+          <div class="offer-action-bar">
+            <div class="offer-code-box">
+              <span class="code-text">Code: <strong><%= offer.code %></strong></span>
+              <button type="button" class="copy-code-btn" onclick="copyOfferCode('<%= offer.code %>', this)">COPY</button>
+            </div>
+            <a href="/custom-package?code=<%= offer.code %>" class="offer-book-btn">BOOK NOW</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Terms & Conditions Modal -->
+<div class="tc-modal-overlay" id="tc-modal">
+  <div class="tc-modal-box">
+    <div class="tc-modal-header">
+      <h3 id="tc-modal-title">Terms & Conditions</h3>
+      <button type="button" class="tc-close-btn" onclick="closeTcModal()">×</button>
+    </div>
+    <div class="tc-modal-body" id="tc-modal-text"></div>
+    <div class="tc-modal-footer">
+      <button type="button" class="button" onclick="closeTcModal()">Understood</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hotels & Sightseeing Places According to Location ("some hotels places come acc to location") -->
+<section class="section location-explorer-section" id="location-explorer">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Destination Intelligence · Live Availability</span>
+      <h2>Curated Hotels & Places by Location</h2>
+      <p class="muted">Explore handpicked 3★ to 5★ luxury stays, heritage homestays, private houseboats, and top sightseeing spots across Kerala & South India.</p>
+    </div>
+    <a href="/explore" class="view-all-link">Open Full Explorer →</a>
+  </div>
+
+  <!-- Location Filter Tabs -->
+  <div class="location-tabs-bar">
+    <% locations.forEach((loc, index) => { %>
+      <button type="button" 
+              class="loc-filter-tab <%= index === 0 ? 'active' : '' %>" 
+              data-loc="<%= loc %>"
+              onclick="filterLocationData('<%= loc %>', this)">
+        <%= loc %>
+      </button>
+    <% }) %>
+  </div>
+
+  <!-- Hotels Grid -->
+  <div class="loc-data-wrapper">
+    <div class="loc-subheading">
+      <h3>Recommended Hotels & Stays in <span id="current-loc-label">All Locations</span></h3>
+      <span class="small">Per room per night · Twin sharing · Verified hygiene</span>
+    </div>
+
+    <div class="hotel-cards-grid" id="hotels-grid">
+      <% hotels.forEach(hotel => { %>
+        <div class="hotel-card" data-location="<%= hotel.location %>">
+          <div class="hotel-img" style="background-image: url('<%= hotel.image %>')">
+            <span class="hotel-star-tag"><%= hotel.starCategory %></span>
+            <span class="hotel-loc-tag">📍 <%= hotel.location %></span>
+          </div>
+          <div class="hotel-details">
+            <div class="hotel-title-row">
+              <h4><%= hotel.name %></h4>
+              <span class="hotel-rating">★ <%= hotel.rating %> <small>(<%= hotel.reviewsCount %>)</small></span>
+            </div>
+            <p class="hotel-desc"><%= hotel.description %></p>
+            <div class="hotel-amenities">
+              <% (hotel.amenities || []).slice(0, 3).forEach(am => { %>
+                <span class="am-tag"><%= am %></span>
+              <% }) %>
+            </div>
+            <div class="hotel-footer-row">
+              <div class="hotel-price-box">
+                <span class="price-from">From</span>
+                <strong>₹<%= hotel.pricePerNight.toLocaleString("en-IN") %></strong>
+                <small>/ night</small>
+              </div>
+              <a href="/custom-package?hotel=<%= encodeURIComponent(hotel.name) %>&dest=<%= encodeURIComponent(hotel.location) %>" class="button btn-add-package">+ Add to Custom Trip</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Sightseeing Places Grid -->
+    <div class="loc-subheading" style="margin-top: 3.5rem;">
+      <h3>Top Sightseeing & Experiences in <span id="current-places-loc-label">All Locations</span></h3>
+      <span class="small">Highlights & curated local activities</span>
+    </div>
+
+    <div class="places-cards-grid" id="places-grid">
+      <% places.forEach(place => { %>
+        <div class="place-card" data-location="<%= place.location %>">
+          <div class="place-img" style="background-image: url('<%= place.image %>')">
+            <span class="place-category-badge"><%= place.category %></span>
+            <span class="place-loc-badge">📍 <%= place.location %></span>
+          </div>
+          <div class="place-content">
+            <h4><%= place.name %></h4>
+            <p class="place-desc"><%= place.description %></p>
+            <div class="place-meta">
+              <span>⏱️ <%= place.duration %></span>
+              <span>☀️ <%= place.bestTimeToVisit %></span>
+            </div>
+            <ul class="place-highlights">
+              <% (place.highlights || []).forEach(hl => { %>
+                <li>✓ <%= hl %></li>
+              <% }) %>
+            </ul>
+            <a href="/custom-package?dest=<%= encodeURIComponent(place.location) %>" class="place-add-link">+ Include in Itinerary →</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Dual Feature Section: "Custom Package Builder" & "AI Trip Planner" -->
+<section class="section builder-ai-split-section">
+  <div class="split-cards-grid">
+    <!-- Card 1: Custom Package Builder -->
+    <div class="feature-action-card builder-card">
+      <div class="card-pill">Bespoke Travel</div>
+      <h3>Design Your Custom Package</h3>
+      <p>Pick your favourite Kerala or South India destinations, select 3★/4★/5★ hotels according to each town, customize private vehicle transfers, add special fare discounts, and instantly generate a branded PDF quote.</p>
+      <ul class="feature-ticks">
+        <li>✓ Live twin-sharing and 5% GST itemized calculator</li>
+        <li>✓ Real-time hotel selection by location</li>
+        <li>✓ Apply promo codes from top offers (`MMTKERALA`, `HOUSEBOAT3K`)</li>
+      </ul>
+      <a href="/custom-package" class="button builder-btn">Open Custom Package Builder →</a>
+    </div>
+
+    <!-- Card 2: AI Trip Generator -->
+    <div class="feature-action-card ai-card">
+      <div class="card-pill ai-pill">✨ Powered by AI</div>
+      <h3>Ask AI to Plan Your Dream Journey</h3>
+      <p>Tell our intelligent South India planner your group size, days, budget, and wishes (e.g. <em>"2 adults and 1 kid, Kerala 5-6 nights in December, budget around 1.2 lakh total, houseboat a must"</em>). AI crafts a complete, transparent itinerary in seconds.</p>
+      <ul class="feature-ticks">
+        <li>✓ Generates day-by-day morning, afternoon & evening plans</li>
+        <li>✓ Pairs genuine verified hotels to each destination</li>
+        <li>✓ Real prices with Twin Sharing and GST transparency</li>
+      </ul>
+      <a href="/ai-planner" class="button ai-btn">Try AI Trip Planner Now →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Curated Featured Journeys (Including PKG-KL-07 Sample Package) -->
+<section class="section">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">A Considered Selection</span>
+      <h2>Signature South India Journeys</h2>
+      <p class="muted">All packages feature private chauffeur transfers, premium stays, breakfast, and dedicated 24/7 Kochi concierge.</p>
+    </div>
+    <a href="/journeys" class="view-all-link">View all <%= packages.length %> journeys →</a>
+  </div>
+
+  <div class="card-grid">
+    <% packages.forEach(pkg => { %>
+      <%- include("_card", { pkg }) %>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Sample Enquiry Banner (Direct Reference to Prompt Specification) -->
+<section class="section sample-prompt-banner">
+  <div class="prompt-banner-box">
+    <div class="prompt-banner-copy">
+      <span class="eyebrow">Instant Itinerary & Quotation</span>
+      <h3>"Hi, 2 adults and 1 kid, Kerala 5-6 nights in December, budget around 1.2 lakh total, houseboat a must"</h3>
+      <p>Looking for a custom family or couple package matching these exact dates and budget? Our Kochi travel specialists and AI engine will tailor your day-wise plan and send a branded quote in under 1 hour.</p>
+    </div>
+    <div class="prompt-banner-cta">
+      <a href="/custom-package?dest=Alleppey&code=MMTKERALA" class="button">Get Custom Quote →</a>
+      <a href="/journeys/munnar-thekkady-and-alleppey-houseboat" class="ghost" style="margin-top: 0.5rem; text-align: center; display: block;">View PKG-KL-07 Package</a>
+    </div>
+  </div>
+</section>
+
+<!-- Travel Blogs & Stories ("lead readers to the right package") -->
+<section class="section blogs-preview-section">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Stories & Insight</span>
+      <h2>From the Asteria Editorial Desk</h2>
+      <p class="muted">Essential guides to the backwaters, tea hills, and temple towns of South India.</p>
+    </div>
+    <a href="/blogs" class="view-all-link">Explore all stories →</a>
+  </div>
+
+  <div class="card-grid">
+    <% blogs.forEach(blog => { %>
+      <a class="blog-card" href="/blogs/<%= blog.slug %>">
+        <div class="blog-image" style="background-image: url('<%= blog.image && blog.image.url %>')">
+          <span class="blog-cat-badge"><%= blog.category %></span>
+        </div>
+        <div class="blog-card-copy">
+          <span class="small"><%= blog.readTime %> · By <%= blog.author %></span>
+          <h3><%= blog.title %></h3>
+          <p><%= blog.excerpt %></p>
+          <span class="read-more-link">Read Story & View Journeys →</span>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Client Story Section -->
+<section class="story">
+  <div>
+    <span class="eyebrow">The Asteria Way · Company A, Kochi</span>
+    <h2>The best days are the unscripted ones.</h2>
+    <p>We take care of every transfer, stay, and reservation so you can be fully present for the good stuff: a quiet pot of fresh tea in Munnar, an unexpected elephant trumpeting across Periyar Lake, and a backwater sunset that gently asks you to stay.</p>
+  </div>
+</section>
+
+<!-- Interactive Client-side Scripting for Tabs, Carousel, Offers & Location Filtering -->
+<script>
+  // 1. Offers Carousel Scrolling
+  const carousel = document.getElementById('offers-carousel');
+  const prevBtn = document.getElementById('offers-prev');
+  const nextBtn = document.getElementById('offers-next');
+
+  if (carousel && prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: -340, behavior: 'smooth' });
+    });
+    nextBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: 340, behavior: 'smooth' });
+    });
+  }
+
+  // 2. Offers Category Tab Filtering
+  const offerTabs = document.querySelectorAll('.offer-cat-tab');
+  const offerCards = document.querySelectorAll('.offer-card');
+
+  offerTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      offerTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const cat = tab.dataset.category;
+
+      offerCards.forEach(card => {
+        if (cat === 'all' || card.dataset.category === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // 3. Copy Coupon Code with Feedback
+  function copyOfferCode(code, btn) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'COPIED!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('copied');
+        }, 2200);
+      });
+    } else {
+      alert('Offer Code: ' + code);
+    }
+  }
+
+  // 4. Terms and Conditions Modal
+  const tcModal = document.getElementById('tc-modal');
+  const tcTitle = document.getElementById('tc-modal-title');
+  const tcText = document.getElementById('tc-modal-text');
+
+  function openTcModal(title, text) {
+    if (tcModal && tcTitle && tcText) {
+      tcTitle.innerText = title + ' · T&C';
+      tcText.innerText = text;
+      tcModal.classList.add('open');
+    }
+  }
+
+  function closeTcModal() {
+    if (tcModal) tcModal.classList.remove('open');
+  }
+
+  if (tcModal) {
+    tcModal.addEventListener('click', (e) => {
+      if (e.target === tcModal) closeTcModal();
+    });
+  }
+
+  // 5. Location Explorer Filtering (Hotels and Places by Location)
+  function filterLocationData(location, btn) {
+    document.querySelectorAll('.loc-filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const locLabel = document.getElementById('current-loc-label');
+    const placesLocLabel = document.getElementById('current-places-loc-label');
+    if (locLabel) locLabel.innerText = location;
+    if (placesLocLabel) placesLocLabel.innerText = location;
+
+    const hotelCards = document.querySelectorAll('.hotel-card');
+    const placeCards = document.querySelectorAll('.place-card');
+
+    hotelCards.forEach(card => {
+      if (location === 'All Locations' || card.dataset.location.toLowerCase() === location.toLowerCase()) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    placeCards.forEach(card => {
+      if (location === 'All Locations' || card.dataset.location.toLowerCase() === location.toLowerCase()) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // 6. Special Fare Radio styling interaction
+  const fareRadios = document.querySelectorAll('.fare-card input[type="radio"]');
+  fareRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.fare-card').forEach(fc => fc.classList.remove('active'));
+      if (radio.checked) {
+        radio.closest('.fare-card').classList.add('active');
+      }
+    });
+  });
+</script>

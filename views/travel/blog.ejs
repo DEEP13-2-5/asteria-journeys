@@ -1,0 +1,57 @@
+<%- layout("/layout/travel") %>
+
+<article class="blog-single-container">
+  <!-- Article Header -->
+  <header class="blog-header">
+    <div class="blog-meta-top">
+      <span class="blog-cat-pill"><%= blog.category %></span>
+      <span class="blog-read-time">📖 <%= blog.readTime %></span>
+      <span class="blog-date">📅 <%= new Date(blog.publishedAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) %></span>
+    </div>
+    <h1><%= blog.title %></h1>
+    <p class="blog-excerpt-lead"><%= blog.excerpt %></p>
+    <div class="blog-author-line">
+      <span>Written by <strong><%= blog.author %></strong></span> · Asteria Journeys, Kochi
+    </div>
+  </header>
+
+  <!-- Hero Image -->
+  <% if (blog.image && blog.image.url) { %>
+    <div class="blog-hero-image" style="background-image: url('<%= blog.image.url %>');"></div>
+  <% } %>
+
+  <!-- Article Body -->
+  <div class="blog-body-wrapper">
+    <div class="blog-prose">
+      <%- blog.content.replace(/\n\n/g, '<p></p>').replace(/\n/g, '<br>') %>
+
+      <% if (blog.tags && blog.tags.length) { %>
+        <div class="blog-tags-row">
+          <span>Tags:</span>
+          <% blog.tags.forEach(tag => { %>
+            <span class="blog-tag">#<%= tag %></span>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Related Packages ("lead readers to the right package") -->
+  <section class="section related-packages-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Experience this story firsthand</span>
+        <h2>Handcrafted Journeys for this Guide</h2>
+        <p class="muted">Ready-to-book private packages featuring the destinations and stays covered in this guide.</p>
+      </div>
+      <a href="/journeys" class="view-all-link">Browse All Journeys →</a>
+    </div>
+
+    <div class="card-grid">
+      <% (relatedPackages || []).forEach(pkg => { %>
+        <%- include("_card", { pkg }) %>
+      <% }) %>
+    </div>
+  </section>
+</article>
+

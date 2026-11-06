@@ -1,0 +1,343 @@
+<%- layout("/layout/travel") %>
+
+<div class="ai-planner-hero">
+  <div class="ai-hero-inner">
+    <span class="eyebrow">Artificial Intelligence · Custom Travel Design</span>
+    <h1>AI Journey Planner for Kerala & South India</h1>
+    <p>Describe your dream vacation in plain words. Our AI engine coordinates authentic regional itineraries, pairs verified 4★/5★ hotels by location, and outputs real transparent pricing with twin sharing and GST.</p>
+  </div>
+</div>
+
+<div class="ai-planner-wrapper">
+  <!-- Interactive Input Card -->
+  <div class="ai-input-card">
+    <div class="ai-badge-row">
+      <span class="ai-chip">⚡ Instant 3-Second Plan</span>
+      <span class="ai-chip">🏨 Live Hotel Matching</span>
+      <span class="ai-chip">🏷️ Twin Sharing & 5% GST Transparency</span>
+    </div>
+
+    <!-- Quick Preset Prompts -->
+    <div class="preset-prompts-row">
+      <span class="preset-label">Quick Prompts:</span>
+      <button type="button" class="preset-btn" onclick="setPreset('Kerala Munnar Thekkady Alleppey', 6, '2 Adults, 1 Kid', '1.2 Lakh', 'Houseboat a must, tea gardens, private cab', 'Family Saver')">
+        📍 Sample: 2 Adults + 1 Kid (Dec / Houseboat)
+      </button>
+      <button type="button" class="preset-btn" onclick="setPreset('Munnar & Alleppey Backwaters', 5, '2 Adults', '75,000', 'Romantic honeymoon, candlelight dinner, luxury houseboat', 'Honeymoon Special')">
+        💑 Romantic Kerala Honeymoon
+      </button>
+      <button type="button" class="preset-btn" onclick="setPreset('Madurai Rameswaram Kanyakumari', 5, '2 Adults', '60,000', 'Temple darshan, Pamban bridge, Vivekananda rock', 'Regular')">
+        🛕 South India Temple Passage
+      </button>
+    </div>
+
+    <form id="ai-generate-form" class="ai-form-grid">
+      <div class="ai-form-col">
+        <label class="form-label">
+          Where would you like to travel?
+          <input type="text" id="ai-dest" name="destination" class="form-input" required value="Munnar, Thekkady and Alleppey" placeholder="e.g. Munnar, Alleppey houseboat, Kochi">
+        </label>
+      </div>
+
+      <div class="ai-form-col-three">
+        <label class="form-label">
+          Trip Duration
+          <select id="ai-days" name="days" class="form-input">
+            <option value="4">4 Days / 3 Nights</option>
+            <option value="5">5 Days / 4 Nights</option>
+            <option value="6" selected>6 Days / 5 Nights</option>
+            <option value="7">7 Days / 6 Nights</option>
+            <option value="8">8 Days / 7 Nights</option>
+          </select>
+        </label>
+
+        <label class="form-label">
+          Travellers
+          <input type="text" id="ai-travellers" name="travellers" class="form-input" required value="2 Adults, 1 Kid" placeholder="e.g. 2 Adults, 1 Kid">
+        </label>
+
+        <label class="form-label">
+          Approximate Budget
+          <input type="text" id="ai-budget" name="budget" class="form-input" value="₹1.2 Lakh Total" placeholder="e.g. ₹1.2 Lakh Total">
+        </label>
+      </div>
+
+      <div class="ai-form-col">
+        <label class="form-label">
+          Must-Have Experiences & Preferences
+          <textarea id="ai-musthave" name="mustHave" class="form-input" rows="2" placeholder="e.g. Houseboat a must, lake view stays, tea tasting, ayurvedic massage">Houseboat a must, tea garden resort, private AC chauffeur</textarea>
+        </label>
+      </div>
+
+      <div class="ai-form-col-two">
+        <label class="form-label">
+          Special Fare Type
+          <select id="ai-fare" name="fareType" class="form-input">
+            <option value="Regular" selected>Regular Fare</option>
+            <option value="Student">Student (Extra discount)</option>
+            <option value="Armed Forces">Armed Forces (₹600 off)</option>
+            <option value="Senior Citizen">Senior Citizen (₹600 off)</option>
+            <option value="Have a GST number?">GST Corporate Benefit</option>
+          </select>
+        </label>
+
+        <label class="form-label">
+          Promo Code
+          <input type="text" id="ai-promo" name="promoCode" class="form-input" value="MMTKERALA" placeholder="e.g. MMTKERALA or HOUSEBOAT3K">
+        </label>
+      </div>
+
+      <div class="ai-submit-row">
+        <button type="submit" id="ai-generate-btn" class="button ai-large-btn">
+          ✨ Generate Custom AI Package Now
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  <div id="ai-loading" class="ai-loading-box" style="display:none;">
+    <div class="ai-spinner"></div>
+    <h3>AI is orchestrating your South India Journey...</h3>
+    <p class="muted">Matching curated hotels in each location, organizing day-wise pacing, calculating twin-sharing rates and 5% GST itemization.</p>
+  </div>
+
+  <!-- Generated Package Result Container -->
+  <div id="ai-result" class="ai-result-box" style="display:none;">
+    <div class="result-header">
+      <div class="result-badge-code">
+        <span class="ai-code-tag" id="res-code">AI-PK-2026</span>
+        <span class="ai-status-tag">Tailored by Asteria AI</span>
+      </div>
+      <h2 id="res-title">AI Custom Package Title</h2>
+      <p id="res-subtitle" class="res-subtitle-text"></p>
+      <p id="res-desc" class="res-desc-text"></p>
+    </div>
+
+    <!-- Recommended Hotels by Location ("some hotels places come acc to location") -->
+    <div class="res-hotels-section">
+      <h3>Matched Hotels According to Location</h3>
+      <div class="res-hotels-grid" id="res-hotels-list"></div>
+    </div>
+
+    <!-- Day-by-Day Itinerary -->
+    <div class="res-itinerary-section">
+      <h3>Day-Wise Itinerary Plan</h3>
+      <div class="res-itinerary-list" id="res-itinerary-list"></div>
+    </div>
+
+    <!-- Inclusions & Exclusions -->
+    <div class="res-inclusions-section">
+      <h3>Included in this AI Journey</h3>
+      <ul class="res-inc-list" id="res-inc-list"></ul>
+    </div>
+
+    <!-- Price Breakdown Card -->
+    <div class="res-pricing-card">
+      <div class="res-pricing-grid">
+        <div class="price-side-item">
+          <span class="small">Regular Base Rate</span>
+          <del id="res-reg-price">₹36,000</del>
+        </div>
+        <div class="price-side-item">
+          <span class="small">Discounts (Fare + Promo)</span>
+          <span class="tag-discount" id="res-disc-amt">-₹5,100</span>
+        </div>
+        <div class="price-side-item">
+          <span class="small">5% GST (Itemized)</span>
+          <span id="res-gst-amt">₹1,545</span>
+        </div>
+        <div class="price-side-item highlight">
+          <span class="small">Price Per Person (Twin Sharing)</span>
+          <strong class="res-final-price" id="res-final-price">₹32,445</strong>
+        </div>
+      </div>
+      <p class="small text-center muted" style="margin-top: 0.8rem;" id="res-twin-note">
+        Prices are per person on twin sharing basis. 5% GST is clearly itemized.
+      </p>
+    </div>
+
+    <!-- Actions: Submit Enquiry, Branded PDF Quote, Customize in Builder -->
+    <div class="res-actions-bar">
+      <button type="button" class="button" onclick="openEnquiryFromAI()">Book / Enquire with this AI Plan →</button>
+      <button type="button" class="ghost" onclick="customizeInBuilder()">Fine-Tune in Custom Builder ↗</button>
+    </div>
+
+    <!-- Direct Enquiry Modal from AI -->
+    <div id="ai-enquiry-drawer" class="ai-enquiry-drawer" style="display:none;">
+      <h3>Confirm & Dispatch Enquiry to Asteria Kochi</h3>
+      <p class="small muted">A human journey consultant will review this AI proposal, confirm hotel room allocations, and reply within 1 hour.</p>
+      
+      <form id="ai-direct-enquiry-form" method="POST" action="/custom-package">
+        <input type="hidden" name="destinations" id="form-dest">
+        <input type="hidden" name="days" id="form-days">
+        <input type="hidden" name="travellers" id="form-travellers">
+        <input type="hidden" name="hotelCategory" id="form-hotel-cat">
+        <input type="hidden" name="fareType" id="form-fare">
+        <input type="hidden" name="promoCode" id="form-promo">
+        <input type="hidden" name="basePrice" id="form-base">
+        <input type="hidden" name="totalPrice" id="form-total">
+        <input type="hidden" name="message" id="form-message">
+
+        <div class="form-two-col">
+          <input type="text" name="name" class="form-input" required placeholder="Your Full Name">
+          <input type="email" name="email" class="form-input" required placeholder="Your Email Address">
+        </div>
+        <div class="form-two-col">
+          <input type="tel" name="phone" class="form-input" required placeholder="Phone / WhatsApp Number">
+          <input type="text" name="travelDates" class="form-input" placeholder="Travel Dates (e.g. Dec 18-24)" value="December">
+        </div>
+
+        <label class="consent-label">
+          <input type="checkbox" name="whatsappConsent" value="true" checked>
+          <span>I consent to receiving official itinerary updates, quotes, and WhatsApp follow-ups in compliance with the DPDP Act 2023.</span>
+        </label>
+
+        <button type="submit" class="button full" style="margin-top: 1rem;">Send to Consultant & Generate Branded Quote →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let latestAIPackage = null;
+
+  function setPreset(dest, days, travellers, budget, mustHave, fare) {
+    document.getElementById('ai-dest').value = dest;
+    document.getElementById('ai-days').value = days;
+    document.getElementById('ai-travellers').value = travellers;
+    document.getElementById('ai-budget').value = budget;
+    document.getElementById('ai-musthave').value = mustHave;
+    if (fare) document.getElementById('ai-fare').value = fare;
+  }
+
+  const aiForm = document.getElementById('ai-generate-form');
+  const loadingBox = document.getElementById('ai-loading');
+  const resultBox = document.getElementById('ai-result');
+
+  if (aiForm) {
+    aiForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loadingBox.style.display = 'block';
+      resultBox.style.display = 'none';
+
+      const payload = {
+        destination: document.getElementById('ai-dest').value,
+        days: document.getElementById('ai-days').value,
+        travellers: document.getElementById('ai-travellers').value,
+        budget: document.getElementById('ai-budget').value,
+        mustHave: document.getElementById('ai-musthave').value,
+        fareType: document.getElementById('ai-fare').value,
+        promoCode: document.getElementById('ai-promo').value
+      };
+
+      try {
+        const res = await fetch('/api/ai/generate-package', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success && data.package) {
+          latestAIPackage = data.package;
+          renderAIPackage(data.package);
+        } else {
+          alert('Could not generate plan. Please try again.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Server error generating AI package.');
+      } finally {
+        loadingBox.style.display = 'none';
+      }
+    });
+  }
+
+  function renderAIPackage(pkg) {
+    document.getElementById('res-code').innerText = pkg.code;
+    document.getElementById('res-title').innerText = pkg.title;
+    document.getElementById('res-subtitle').innerText = pkg.subtitle;
+    document.getElementById('res-desc').innerText = pkg.description;
+
+    // Hotels
+    const hotelsContainer = document.getElementById('res-hotels-list');
+    hotelsContainer.innerHTML = '';
+    (pkg.recommendedHotels || []).forEach(h => {
+      hotelsContainer.innerHTML += `
+        <div class="ai-hotel-card">
+          <div class="ai-hotel-thumb" style="background-image: url('${h.image || ''}')"></div>
+          <div class="ai-hotel-copy">
+            <strong>${h.name}</strong>
+            <span class="small">📍 ${h.location} · ${h.starCategory} · ★ ${h.rating}</span>
+            <span class="small price">₹${(h.pricePerNight || 0).toLocaleString('en-IN')}/night</span>
+          </div>
+        </div>
+      `;
+    });
+
+    // Itinerary
+    const itContainer = document.getElementById('res-itinerary-list');
+    itContainer.innerHTML = '';
+    (pkg.itinerary || []).forEach(day => {
+      itContainer.innerHTML += `
+        <div class="ai-itinerary-item">
+          <span class="day-num">DAY ${String(day.day).padStart(2, '0')}</span>
+          <div>
+            <h4>${day.title}</h4>
+            <p>${day.description}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    // Inclusions
+    const incList = document.getElementById('res-inc-list');
+    incList.innerHTML = '';
+    (pkg.inclusions || []).forEach(inc => {
+      incList.innerHTML += `<li>✓ ${inc}</li>`;
+    });
+
+    // Pricing
+    const p = pkg.pricing || {};
+    document.getElementById('res-reg-price').innerText = '₹' + (p.regularPrice || 0).toLocaleString('en-IN');
+    const totalDisc = (p.fareDiscount || 0) + (p.promoDiscount || 0);
+    document.getElementById('res-disc-amt').innerText = '-₹' + totalDisc.toLocaleString('en-IN');
+    document.getElementById('res-gst-amt').innerText = '₹' + (p.gstAmount || 0).toLocaleString('en-IN');
+    document.getElementById('res-final-price').innerText = '₹' + (p.pricePerPerson || 0).toLocaleString('en-IN');
+
+    resultBox.style.display = 'block';
+    resultBox.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function openEnquiryFromAI() {
+    if (!latestAIPackage) return;
+    const drawer = document.getElementById('ai-enquiry-drawer');
+    drawer.style.display = 'block';
+
+    document.getElementById('form-dest').value = (latestAIPackage.destinations || []).join(',');
+    document.getElementById('form-days').value = latestAIPackage.days;
+    document.getElementById('form-travellers').value = document.getElementById('ai-travellers').value;
+    document.getElementById('form-hotel-cat').value = latestAIPackage.hotelCategory;
+    document.getElementById('form-fare').value = latestAIPackage.pricing?.fareType || 'Regular';
+    document.getElementById('form-promo').value = latestAIPackage.pricing?.promoCode || '';
+    document.getElementById('form-base').value = latestAIPackage.pricing?.discountedPrice || 30000;
+    document.getElementById('form-total').value = latestAIPackage.pricing?.totalPrice || 31500;
+    document.getElementById('form-message').value = `Generated via AI: ${latestAIPackage.title}. ${latestAIPackage.description}`;
+
+    drawer.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function customizeInBuilder() {
+    if (!latestAIPackage) return;
+    const dest = (latestAIPackage.destinations || [])[0] || 'Alleppey';
+    window.location.href = `/custom-package?dest=${encodeURIComponent(dest)}&code=${encodeURIComponent(latestAIPackage.pricing?.promoCode || '')}`;
+  }
+
+  // Auto trigger on load if query param present
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('auto') === '1') {
+    document.getElementById('ai-generate-btn').click();
+  }
+</script>
+

@@ -1,0 +1,61 @@
+<%- layout("/layout/admin") %>
+
+<div class="admin-head">
+  <div>
+    <span class="eyebrow">Sales & Quotes</span>
+    <h1>Branded Quotes</h1>
+    <p>Official PDF quotations generated from packages or custom enquiries.</p>
+  </div>
+  <a class="button" href="/admin/quotes/new">+ Build New Quote</a>
+</div>
+
+<section class="admin-card table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Quote No</th>
+        <th>Guest</th>
+        <th>Package / Tour</th>
+        <th>Total Amount (₹)</th>
+        <th>Status</th>
+        <th>Generated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!quotes || quotes.length === 0) { %>
+        <tr>
+          <td colspan="7" class="text-center muted">No quotes generated yet. Create a quote from a package or custom builder!</td>
+        </tr>
+      <% } else { %>
+        <% quotes.forEach(q => { %>
+          <tr>
+            <td><strong><%= q.quoteNumber %></strong></td>
+            <td>
+              <%= q.customerName %>
+              <small><%= q.customerEmail %></small>
+            </td>
+            <td>
+              <%= q.packageTitle %>
+              <small><%= q.days %> Days · <%= q.hotelCategory %></small>
+            </td>
+            <td>
+              <strong>₹<%= q.totalAmount.toLocaleString("en-IN") %></strong>
+              <small>Twin sharing + 5% GST</small>
+            </td>
+            <td>
+              <span class="pill <%= q.status === 'accepted' ? 'published' : (q.status === 'sent' ? 'in_progress' : 'draft') %>">
+                <%= q.status %>
+              </span>
+            </td>
+            <td><%= new Date(q.createdAt).toLocaleDateString("en-IN") %></td>
+            <td>
+              <a href="/quotes/<%= q._id %>" target="_blank">Open Branded Sheet ↗</a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</section>
+

@@ -1,0 +1,87 @@
+<%- layout("/layout/travel") %>
+
+<main class="section">
+  <span class="eyebrow">Private Holiday Packages · South India</span>
+  <h1 class="page-title">Find your South India story.</h1>
+  <p class="muted">All packages are private journeys on twin sharing basis. 5% GST clearly stated. Customize any package with your consultant.</p>
+
+  <!-- Search & Filters Toolbar -->
+  <form class="packages-filter-bar" action="/journeys" method="GET">
+    <div class="filter-search-box">
+      <input type="text" name="q" value="<%= query %>" placeholder="Search by destination, houseboat, temple...">
+      <button type="submit" class="button">Search</button>
+    </div>
+
+    <div class="filter-dropdowns-row">
+      <label class="filter-drop">
+        <span>Destination</span>
+        <select name="destination" onchange="this.form.submit()">
+          <option value="All" <%= destination === 'All' ? 'selected' : '' %>>All Destinations</option>
+          <option value="Munnar" <%= destination === 'Munnar' ? 'selected' : '' %>>Munnar Hills</option>
+          <option value="Alleppey" <%= destination === 'Alleppey' ? 'selected' : '' %>>Alleppey Houseboat</option>
+          <option value="Thekkady" <%= destination === 'Thekkady' ? 'selected' : '' %>>Thekkady Wildlife</option>
+          <option value="Wayanad" <%= destination === 'Wayanad' ? 'selected' : '' %>>Wayanad Rainforest</option>
+          <option value="Kovalam" <%= destination === 'Kovalam' ? 'selected' : '' %>>Kovalam Beach</option>
+          <option value="Madurai" <%= destination === 'Madurai' ? 'selected' : '' %>>Madurai & Rameswaram</option>
+          <option value="Kanyakumari" <%= destination === 'Kanyakumari' ? 'selected' : '' %>>Kanyakumari</option>
+        </select>
+      </label>
+
+      <label class="filter-drop">
+        <span>Duration</span>
+        <select name="days" onchange="this.form.submit()">
+          <option value="All" <%= daysFilter === 'All' ? 'selected' : '' %>>All Durations</option>
+          <option value="short" <%= daysFilter === 'short' ? 'selected' : '' %>>Short (3 - 4 Days)</option>
+          <option value="medium" <%= daysFilter === 'medium' ? 'selected' : '' %>>Medium (5 - 7 Days)</option>
+          <option value="long" <%= daysFilter === 'long' ? 'selected' : '' %>>Grand (8+ Days)</option>
+        </select>
+      </label>
+
+      <label class="filter-drop">
+        <span>Hotel Category</span>
+        <select name="star" onchange="this.form.submit()">
+          <option value="All" <%= starFilter === 'All' ? 'selected' : '' %>>All Stays</option>
+          <option value="3 star" <%= starFilter === '3 star' ? 'selected' : '' %>>3 Star Comfort</option>
+          <option value="4 star" <%= starFilter === '4 star' ? 'selected' : '' %>>4 Star Deluxe</option>
+          <option value="5 star" <%= starFilter === '5 star' ? 'selected' : '' %>>5 Star Luxury</option>
+        </select>
+      </label>
+
+      <label class="filter-drop">
+        <span>Fare Type</span>
+        <select name="fareType" onchange="this.form.submit()">
+          <option value="Regular" <%= fareType === 'Regular' ? 'selected' : '' %>>Regular Fare</option>
+          <option value="Student" <%= fareType === 'Student' ? 'selected' : '' %>>Student Discount (-₹500)</option>
+          <option value="Armed Forces" <%= fareType === 'Armed Forces' ? 'selected' : '' %>>Armed Forces (-₹600)</option>
+          <option value="Senior Citizen" <%= fareType === 'Senior Citizen' ? 'selected' : '' %>>Senior Citizen (-₹600)</option>
+          <option value="Have a GST number?" <%= fareType === 'Have a GST number?' ? 'selected' : '' %>>GST Business Saver</option>
+        </select>
+      </label>
+
+      <% if (query || destination !== 'All' || daysFilter !== 'All' || starFilter !== 'All') { %>
+        <a href="/journeys" class="reset-filter-link">Clear filters ×</a>
+      <% } %>
+    </div>
+  </form>
+
+  <!-- Quick Action Banners -->
+  <div class="packages-top-promo-banner">
+    <div>
+      <strong>Can't find the exact combination?</strong>
+      <span>Build your own custom itinerary or ask AI to design it for you.</span>
+    </div>
+    <div style="display:flex; gap:0.8rem;">
+      <a href="/custom-package" class="button">Custom Package Builder →</a>
+      <a href="/ai-planner" class="ghost">✨ AI Planner</a>
+    </div>
+  </div>
+
+  <p class="muted" style="margin-top: 1.5rem;"><%= packages.length %> journeys available.</p>
+
+  <!-- Package Cards Grid -->
+  <div class="card-grid">
+    <% packages.forEach(pkg => { %>
+      <%- include("_card", { pkg }) %>
+    <% }) %>
+  </div>
+</main>

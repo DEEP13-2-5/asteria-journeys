@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asteria Journeys · Kerala & South India Holiday Packages</title>
+  <meta name="description" content="Thoughtfully made luxury & slow travel holiday packages through Kerala, Tamil Nadu and South India. Custom itineraries, backwater houseboats, tea estate retreats and bespoke journeys.">
+  <link rel="stylesheet" href="/css/travel.css">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top Utility Bar -->
+  <div class="top-util-bar">
+    <div class="top-util-inner">
+      <div class="top-util-left">
+        <span>📍 Marine Drive, Kochi, Kerala</span>
+        <span class="util-sep">|</span>
+        <span>✉️ concierge@asteriajourneys.com</span>
+        <span class="util-sep">|</span>
+        <span class="tag-live">⚡ Enquiries answered within 1 hour</span>
+      </div>
+      <div class="top-util-right">
+        <a href="/#offers" class="util-link">🏷️ Festive Offers & Discounts</a>
+        <span class="util-sep">|</span>
+        <a href="/blogs" class="util-link">📖 Travel Guides</a>
+        <span class="util-sep">|</span>
+        <% if (currUser) { %>
+          <span class="util-link">👤 <strong><%= currUser.username %></strong> (<span style="text-transform:capitalize;"><%= currUser.role %></span>)</span>
+          <span class="util-sep">|</span>
+          <% if (currUser.role === 'owner' || currUser.role === 'consultant') { %>
+            <a href="/admin/enquiries" class="util-link"><strong>⚙️ Admin Workspace</strong></a>
+            <span class="util-sep">|</span>
+          <% } %>
+          <a href="/logout" class="util-link">Sign out</a>
+        <% } else { %>
+          <a href="/login" class="util-link">Staff Sign In</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Navigation -->
+  <nav class="travel-nav">
+    <div class="nav-left">
+      <a class="brand" href="/">
+        ASTERIA
+        <small>JOURNEYS · KOCHI</small>
+      </a>
+      <span class="brand-tag">Kerala & South India</span>
+    </div>
+
+    <!-- Main Navigation Links -->
+    <div class="nav-center">
+      <a href="/journeys" class="nav-item">Holiday Packages</a>
+      <a href="/explore" class="nav-item">Hotels & Places</a>
+      <a href="/custom-package" class="nav-item">Custom Package</a>
+      <a href="/ai-planner" class="nav-item nav-item-ai">✨ AI Trip Planner</a>
+      <a href="/#offers" class="nav-item">Offers</a>
+      <a href="/blogs" class="nav-item">Stories & Guides</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="button nav-button" href="/custom-package">Build Custom Trip →</a>
+      <!-- Mobile menu toggle -->
+      <button class="mobile-menu-btn" id="mobile-toggle" aria-label="Toggle menu">☰</button>
+    </div>
+  </nav>
+
+  <!-- Mobile Dropdown Menu -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="/journeys">Holiday Packages</a>
+    <a href="/explore">Hotels & Places by Location</a>
+    <a href="/custom-package">Custom Package Builder</a>
+    <a href="/ai-planner">✨ AI Trip Planner</a>
+    <a href="/#offers">Offers & Special Fares</a>
+    <a href="/blogs">Travel Blogs & Guides</a>
+    <% if (currUser) { %>
+      <a href="/admin">Staff Workspace (<%= currUser.username %>)</a>
+      <a href="/logout">Sign Out</a>
+    <% } else { %>
+      <a href="/login">Staff Sign In</a>
+    <% } %>
+    <a class="button full" href="/custom-package">Build Custom Trip →</a>
+  </div>
+
+  <%- include("../includes/flash.ejs") %>
+
+  <!-- Page Body -->
+  <%- body %>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col brand-col">
+        <a class="brand footer-brand" href="/">
+          ASTERIA
+          <small>JOURNEYS · KOCHI</small>
+        </a>
+        <p>Company A, Kochi, Kerala. Selling handcrafted holiday packages to families, honeymooners, and foreign groups across South India since 2018.</p>
+        <p class="dpdp-badge">🛡️ DPDP Act 2023 Compliant · Verified Consent & Data Privacy</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Popular Journeys</h4>
+        <ul>
+          <li><a href="/journeys?q=Munnar">Munnar Tea Valley Escapes</a></li>
+          <li><a href="/journeys?q=Alleppey">Alleppey Houseboat Cruises</a></li>
+          <li><a href="/journeys?q=Thekkady">Thekkady Wildlife & Spices</a></li>
+          <li><a href="/journeys?q=Madurai">Madurai & Rameswaram Temple Trail</a></li>
+          <li><a href="/journeys?q=Wayanad">Wayanad Rainforest Retreats</a></li>
+          <li><a href="/journeys?q=Kovalam">Kovalam Beach & Ayurveda</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Custom Travel & AI</h4>
+        <ul>
+          <li><a href="/custom-package">Custom Package Builder</a></li>
+          <li><a href="/ai-planner">AI Journey Planner</a></li>
+          <li><a href="/explore">Hotels by Location</a></li>
+          <li><a href="/#offers">MakeMyTrip Style Top Offers</a></li>
+          <li><a href="/blogs">Kerala Travel Guides</a></li>
+          <li><a href="/sitemap.xml">XML Sitemap</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Kochi Head Office</h4>
+        <p>Asteria Journeys India Pvt Ltd<br>
+        Marine Drive, Ernakulam, Kochi 682031<br>
+        Kerala, India</p>
+        <p>GSTIN: 32AABCA0000A1Z5<br>
+        Email: concierge@asteriajourneys.com<br>
+        Hours: Mon–Sat, 9:00 AM – 7:00 PM IST</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© <%= new Date().getFullYear() %> Asteria Journeys, Kochi. All rights reserved. Prices are per person on twin sharing basis. GST itemized transparently.</div>
+      <div class="footer-links">
+        <a href="/journeys">Packages</a> ·
+        <a href="/explore">Stays</a> ·
+        <a href="/custom-package">Custom Builder</a> ·
+        <a href="/ai-planner">AI Planner</a> ·
+        <a href="/login">Staff Access</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global scripts -->
+  <script>
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    if (mobileToggle && mobileNav) {
+      mobileToggle.addEventListener('click', () => {
+        mobileNav.classList.toggle('active');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<%- layout("/layout/admin") %>
+
+<div class="admin-head">
+  <div>
+    <span class="eyebrow">Owner Controls</span>
+    <h1>Team & Staff Access</h1>
+    <p>Manage travel consultants, invite new staff members, and control workspace permissions.</p>
+  </div>
+</div>
+
+<div class="inbox-grid">
+  <!-- Left Column: Add / Invite Consultant -->
+  <section class="admin-card">
+    <span class="eyebrow">Onboard Staff</span>
+    <h2>Invite a New Consultant</h2>
+    <p class="muted">Generate a secure one-time invitation link for a new itinerary consultant or operations specialist.</p>
+    
+    <form method="POST" action="/admin/team/invitations" style="margin-top:1.2rem;">
+      <label>
+        Consultant Full Name
+        <input name="recipientName" required placeholder="e.g. Vivek Sharma">
+      </label>
+      <button class="button full" style="margin-top:0.75rem;">Generate Consultant Invitation Link →</button>
+    </form>
+    
+    <div style="margin-top:1.5rem; padding:1rem; background:#f4f9f6; border-radius:6px; border:1px solid #d0e6da; font-size:0.85rem;">
+      💡 <strong>Quick Note:</strong> You can also have consultants register directly at <a href="/signup" target="_blank" style="color:var(--ink); font-weight:600;">/signup</a> by selecting the <strong>💼 Consultant</strong> role.
+    </div>
+  </section>
+
+  <!-- Right Column: Active Staff Members -->
+  <section class="admin-card">
+    <span class="eyebrow">Workspace Members</span>
+    <h2>Active Team Staff (<%= staff.length %>)</h2>
+    <div style="display:flex; flex-direction:column; gap:0.85rem; margin-top:1rem;">
+      <% staff.forEach(member => { %>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 0.95rem; background:#fbfbfa; border:1px solid #e5e7eb; border-radius:6px;">
+          <div>
+            <strong><%= member.username %></strong>
+            <small style="display:block; color:#64748b;"><%= member.email %></small>
+          </div>
+          <div>
+            <span class="pill <%= member.role === 'owner' ? 'booked' : 'new' %>" style="text-transform:capitalize;">
+              <%= member.role === 'owner' ? '👑 Owner' : '💼 Consultant' %>
+            </span>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+</div>
+
+<!-- Pending Invitations -->
+<section class="admin-card" style="margin-top:2rem;">
+  <h2>Pending App Invitations</h2>
+  <% if (!invitations.length) { %>
+    <p class="muted">No pending invitations. All invitations have been claimed or expired.</p>
+  <% } else { %>
+    <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:0.75rem;">
+      <% invitations.forEach(invite => { %>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 1rem; border:1px solid #e5e7eb; border-radius:6px;">
+          <div>
+            <strong><%= invite.recipientName %></strong>
+            <small style="display:block; color:#64748b;">Valid for 7 days · Expires <%= invite.expiresAt.toLocaleDateString('en-IN') %></small>
+          </div>
+          <span class="pill in_progress">Pending Acceptance</span>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>

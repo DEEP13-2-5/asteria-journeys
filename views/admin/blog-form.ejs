@@ -1,0 +1,133 @@
+<%- layout("/layout/admin") %>
+
+<div class="admin-head">
+  <div>
+    <span class="eyebrow">Blog CMS</span>
+    <h1><%= blog ? "Edit Article" : "New Article" %></h1>
+    <p>Every post connects your stories directly to bookable packages.</p>
+  </div>
+  <% if (blog) { %>
+    <a href="/blogs/<%= blog.slug %>" target="_blank">View Live Post ↗</a>
+  <% } else { %>
+    <a href="/admin/blogs">← Back to Blog CMS</a>
+  <% } %>
+</div>
+
+<form class="editor-grid" method="POST" enctype="multipart/form-data" action="<%= blog ? '/admin/blogs/' + blog._id + '?_method=PUT' : '/admin/blogs' %>">
+  <main>
+    <section class="admin-card">
+      <label>
+        Article Title *
+        <input name="title" required value="<%= blog ? blog.title : '' %>" placeholder="e.g. The Ultimate Kerala Backwaters Guide">
+      </label>
+
+      <label>
+        Short Excerpt *
+        <textarea name="excerpt" required rows="2" placeholder="A compelling 2-sentence summary that appears in listings..."><%= blog ? blog.excerpt : '' %></textarea>
+      </label>
+
+      <label>
+        Article Content (Markdown / Text) *
+        <textarea name="content" required rows="14" placeholder="Write your full guide here..."><%= blog ? blog.content : '' %></textarea>
+      </label>
+
+      <div class="two">
+        <label>
+          Category
+          <select name="category">
+            <% ["Destination Guides", "Travel Tips", "Culture & Heritage", "Monsoon Stories", "Ayurveda & Wellness"].forEach(c => { %>
+              <option value="<%= c %>" <%= blog && blog.category === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </label>
+
+        <label>
+          Author Name
+          <input name="author" value="<%= blog ? blog.author : 'Asteria Editorial' %>">
+        </label>
+      </div>
+
+      <div class="two">
+        <label>
+          Estimated Read Time
+          <input name="readTime" value="<%= blog ? blog.readTime : '5 min read' %>" placeholder="e.g. 6 min read">
+        </label>
+
+        <label>
+          Tags (Comma-separated)
+          <input name="tags" value="<%= blog && blog.tags ? blog.tags.join(', ') : 'Kerala, Munnar, Backwaters' %>" placeholder="e.g. Kerala, Houseboat, Munnar">
+        </label>
+      </div>
+    </section>
+
+    <!-- SEO Fields Section (from brief requirement: "Blog CMS: rich editor with images, categories, SEO fields and related packages on each post") -->
+    <section class="admin-card">
+      <h2>SEO & Search Visibility</h2>
+      <p class="small muted">Optimize for organic search traffic.</p>
+      
+      <label>
+        SEO Meta Title
+        <input name="seoTitle" value="<%= blog ? blog.seoTitle : '' %>" placeholder="e.g. Kerala Backwaters Guide: Houseboat Routes & Costs | Asteria Journeys">
+      </label>
+
+      <label>
+        SEO Meta Description
+        <textarea name="seoDescription" rows="2" placeholder="e.g. Explore the best Kerala houseboat itineraries, seasonal prices, and local cuisine tips."><%= blog ? blog.seoDescription : '' %></textarea>
+      </label>
+    </section>
+  </main>
+
+  <aside>
+    <!-- Featured Image -->
+    <section class="admin-card">
+      <h2>Featured Image</h2>
+      <label>
+        Upload Hero Image
+        <input type="file" name="image" accept="image/*">
+      </label>
+
+      <label>
+        Or Image Web URL
+        <input type="url" name="imageUrl" value="<%= blog && blog.image ? blog.image.url : '' %>" placeholder="https://images.unsplash.com/...">
+      </label>
+
+      <% if (blog && blog.image && blog.image.url) { %>
+        <img class="admin-image" src="<%= blog.image.url %>" alt="Article image preview">
+      <% } %>
+    </section>
+
+    <!-- Related Packages Selection ("lead readers to the right package") -->
+    <section class="admin-card">
+      <h2>Related Packages</h2>
+      <p class="small muted">Select packages to display at the end of this article.</p>
+
+      <div class="related-packages-selector" style="max-height: 250px; overflow-y: auto;">
+        <% packages.forEach(pkg => { %>
+          <label class="related-pkg-item" style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; font-size:0.85rem; font-weight:normal;">
+            <input type="checkbox" name="relatedPackages" value="<%= pkg._id %>" 
+              <%= blog && blog.relatedPackages && blog.relatedPackages.map(String).includes(String(pkg._id)) ? 'checked' : '' %>>
+            <span><strong><%= pkg.code %></strong> - <%= pkg.title %></span>
+          </label>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- Publishing Status -->
+    <section class="admin-card">
+      <h2>Publication Status</h2>
+      <label>
+        Status
+        <select name="status">
+          <option value="published" <%= !blog || blog.status === 'published' ? 'selected' : '' %>>Published</option>
+          <option value="draft" <%= blog && blog.status === 'draft' ? 'selected' : '' %>>Draft</option>
+        </select>
+      </label>
+    </section>
+  </aside>
+
+  <div class="save-bar">
+    <a href="/admin/blogs" class="ghost">Cancel</a>
+    <button class="button" type="submit"><%= blog ? "Update Article →" : "Publish Article →" %></button>
+  </div>
+</form>
+

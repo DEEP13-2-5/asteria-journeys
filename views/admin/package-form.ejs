@@ -1,0 +1,115 @@
+<%- layout("/layout/admin") %>
+<div class="admin-head">
+  <div>
+    <span class="eyebrow">Package CMS</span>
+    <h1><%= pkg ? "Edit Journey" : "New Journey" %></h1>
+    <p>Every save creates a version you can audit.</p>
+  </div>
+  <a href="<%= pkg ? '/journeys/' + pkg.slug + '?preview=1' : '/admin/packages' %>" target="_blank">Open Preview ↗</a>
+</div>
+
+<form class="editor-grid" method="POST" enctype="multipart/form-data" action="<%= pkg ? '/admin/packages/' + pkg._id + '?_method=PUT' : '/admin/packages' %>">
+  <main>
+    <section class="admin-card">
+      <label>Journey Title *
+        <input name="title" required value="<%= pkg ? pkg.title : '' %>" placeholder="e.g. Munnar, Thekkady and Alleppey houseboat">
+      </label>
+      <label>Package ID *
+        <input name="code" required value="<%= pkg ? pkg.code : '' %>" placeholder="e.g. PKG-KL-07">
+      </label>
+      <label>Short Description
+        <input name="subtitle" value="<%= pkg ? pkg.subtitle : '' %>" placeholder="e.g. Kerala's iconic trio: hills, spices, and backwaters">
+      </label>
+      <label>Journey Story *
+        <textarea name="description" required rows="4" placeholder="Tell the traveller what this private holiday feels like..."><%= pkg ? pkg.description : '' %></textarea>
+      </label>
+      <div class="two">
+        <label>Duration (Days) *
+          <input type="number" min="1" name="days" required value="<%= pkg ? pkg.days : 6 %>">
+        </label>
+        <label>Hotel Category
+          <select name="hotelCategory">
+            <% ["3 star", "4 star", "5 star"].forEach(v => { %>
+              <option <%= pkg && pkg.hotelCategory === v ? 'selected' : '' %>><%= v %></option>
+            <% }) %>
+          </select>
+        </label>
+      </div>
+      <label>Destinations (one per line)
+        <textarea name="destinations" rows="3"><%= pkg ? pkg.destinations.join('\n') : 'Kochi\nMunnar\nThekkady\nAlleppey' %></textarea>
+      </label>
+      <label>Inclusions (one per line)
+        <textarea name="inclusions" rows="4"><%= pkg ? pkg.inclusions.join('\n') : 'Accommodation on twin sharing basis\nPrivate AC chauffeur vehicle\nDaily breakfast\nHouseboat day cruise with lunch' %></textarea>
+      </label>
+      <label>Day-Wise Itinerary (one day per line)
+        <textarea name="itinerary" rows="6"><%= pkg ? pkg.itinerary.map(row => row.description).join('\n') : '' %></textarea>
+      </label>
+    </section>
+
+    <section class="admin-card">
+      <h2>Seasonal Pricing</h2>
+      <p class="small muted">Prices must be per person, twin sharing, with GST stated on the public page.</p>
+      <div id="prices">
+        <% const prices = pkg && pkg.seasonalPrices && pkg.seasonalPrices.length ? pkg.seasonalPrices : [{ label:'Peak · Oct–Mar', price:32500 }, { label:'Monsoon · Jun–Sep', price:24900 }]; %>
+        <% prices.forEach(row => { %>
+          <div class="price-input">
+            <input name="seasonLabel" value="<%= row.label %>" placeholder="Season label (e.g. Peak, Oct-Mar)">
+            <input name="seasonPrice" type="number" value="<%= row.price %>" placeholder="Price ₹">
+          </div>
+        <% }) %>
+      </div>
+      <button class="ghost" type="button" id="add-price">+ Add Season</button>
+    </section>
+  </main>
+
+  <aside>
+    <section class="admin-card">
+      <h2>Hero Image & Map</h2>
+      <label>Upload Image
+        <input type="file" name="image" accept="image/*">
+      </label>
+      <label>Or Image Web URL
+        <input type="url" name="imageUrl" value="<%= pkg && pkg.image ? pkg.image.url : '' %>" placeholder="https://images.unsplash.com/...">
+      </label>
+      <% if (pkg && pkg.image && pkg.image.url) { %>
+        <img class="admin-image" src="<%= pkg.image.url %>" alt="Current journey image">
+      <% } %>
+      <div class="two">
+        <label>Latitude
+          <input name="latitude" value="<%= pkg ? pkg.coordinates[1] : 9.9312 %>">
+        </label>
+        <label>Longitude
+          <input name="longitude" value="<%= pkg ? pkg.coordinates[0] : 76.2673 %>">
+        </label>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <h2>Version History</h2>
+      <% if (pkg && pkg.versions && pkg.versions.length) { %>
+        <% pkg.versions.slice(0, 5).forEach(v => { %>
+          <p class="version">
+            <b>Version <%= v.version %></b><br>
+            <small><%= v.note %> · <%= new Date(v.savedAt).toLocaleString("en-IN") %> by <%= v.savedBy %></small>
+          </p>
+        <% }) %>
+      <% } else { %>
+        <p class="muted">The first save will create a version snapshot.</p>
+      <% } %>
+    </section>
+  </aside>
+
+  <div class="save-bar">
+    <button class="ghost" name="action" value="draft">Save Draft</button>
+    <button class="button" name="action" value="publish">Publish Changes →</button>
+  </div>
+</form>
+
+<script>
+  document.getElementById('add-price').onclick = () => {
+    document.getElementById('prices').insertAdjacentHTML(
+      'beforeend',
+      '<div class="price-input"><input name="seasonLabel" placeholder="Season label"><input name="seasonPrice" type="number" placeholder="Price ₹"></div>'
+    );
+  };
+</script>
